@@ -2,6 +2,7 @@ package io.github.cottonmc.test;
 
 import com.mojang.datafixers.util.Unit;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -68,7 +69,7 @@ public class TestDescription extends SyncedGuiDescription {
 
 		buttonA.setOnClick(() -> {
 			getNetworking(NetworkSide.CLIENT).send(TEST_MESSAGE, Codec.INT, ++messagesSent);
-			getNetworking(NetworkSide.CLIENT).send(UNREGISTERED_ON_SERVER, Codec.unit(Unit.INSTANCE), Unit.INSTANCE);
+			getNetworking(NetworkSide.CLIENT).send(UNREGISTERED_ON_SERVER, MapCodec.unitCodec(Unit.INSTANCE), Unit.INSTANCE);
 			buttonColor.set(BUTTON_TEXT_COLORS[messagesSent % BUTTON_TEXT_COLORS.length]);
 		});
 

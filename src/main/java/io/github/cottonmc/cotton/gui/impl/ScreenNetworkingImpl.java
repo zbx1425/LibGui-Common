@@ -1,11 +1,11 @@
 package io.github.cottonmc.cotton.gui.impl;
 
 import com.mojang.datafixers.util.Unit;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Decoder;
 import com.mojang.serialization.Encoder;
 import com.mojang.serialization.Lifecycle;
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -40,7 +40,7 @@ public class ScreenNetworkingImpl implements ScreenNetworking {
 	private static final long MAX_NBT_SIZE = 0x200000L;
 	public static final ScreenMessageKey<Unit> CLIENT_READY_MESSAGE_KEY = new ScreenMessageKey<>(
 		LibGuiCommon.id("client_ready"),
-		Codec.unit(Unit.INSTANCE)
+		MapCodec.unitCodec(Unit.INSTANCE)
 	);
 
 	public record ScreenMessage(int syncId, Identifier message, NbtElement nbt) implements CustomPayload {

@@ -3,6 +3,8 @@ package io.github.cottonmc.cotton.gui.widget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.DrawnTextConsumer;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -14,6 +16,8 @@ import net.minecraft.text.Text;
 import io.github.cottonmc.cotton.gui.client.LibGui;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.impl.client.TextAlignment;
+import io.github.cottonmc.cotton.gui.impl.client.TextStyleCapturer;
+import io.github.cottonmc.cotton.gui.impl.mixin.client.ScreenAccessor;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
@@ -82,9 +86,11 @@ public class WLabel extends WWidget {
 	public InputResult onClick(Click click, boolean doubled) {
 		Style hoveredTextStyle = getTextStyleAt((int) click.x(), (int) click.y());
 		if (hoveredTextStyle != null) {
-			Screen screen = MinecraftClient.getInstance().currentScreen;
-			if (screen != null) {
-				return InputResult.of(screen.handleTextClick(hoveredTextStyle));
+			MinecraftClient client = MinecraftClient.getInstance();
+			Screen screen = client.currentScreen;
+			if (hoveredTextStyle.getClickEvent() != null) {
+				ScreenAccessor.libgui$handleClickEvent(hoveredTextStyle.getClickEvent(), client, screen);
+				return InputResult.of(true);
 			}
 		}
 
@@ -102,8 +108,12 @@ public class WLabel extends WWidget {
 	@Nullable
 	public Style getTextStyleAt(int x, int y) {
 		if (isWithinBounds(x, y)) {
-			int xOffset = TextAlignment.getTextOffsetX(horizontalAlignment, width, text.asOrderedText());
-			return MinecraftClient.getInstance().textRenderer.getTextHandler().getStyleAt(text, x - xOffset);
+			int offsetX = TextAlignment.getTextOffsetX(horizontalAlignment, width, text.asOrderedText());
+			int offsetY = TextAlignment.getTextOffsetY(verticalAlignment, height, 1);
+			TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+			TextStyleCapturer styleCapturer = new TextStyleCapturer(textRenderer, x - offsetX, y - offsetY);
+			styleCapturer.text(0, 0, text);
+			return styleCapturer.getStyle();
 		}
 		return null;
 	}

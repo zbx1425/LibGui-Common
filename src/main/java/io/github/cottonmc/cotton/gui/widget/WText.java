@@ -3,9 +3,11 @@ package io.github.cottonmc.cotton.gui.widget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.DrawnTextConsumer;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.text.OrderedText;
@@ -14,6 +16,8 @@ import net.minecraft.text.Text;
 
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.impl.client.TextAlignment;
+import io.github.cottonmc.cotton.gui.impl.client.TextStyleCapturer;
+import io.github.cottonmc.cotton.gui.impl.mixin.client.ScreenAccessor;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
@@ -82,7 +86,9 @@ public class WText extends WWidget {
 		if (lineIndex >= 0 && lineIndex < wrappedLines.size()) {
 			OrderedText line = wrappedLines.get(lineIndex);
 			int xOffset = TextAlignment.getTextOffsetX(horizontalAlignment, width, line);
-			return font.getTextHandler().getStyleAt(line, x - xOffset);
+			TextStyleCapturer textConsumer = new TextStyleCapturer(font, x - xOffset, y - yOffset - lineIndex * font.fontHeight);
+			textConsumer.text(0, 0, line);
+			return textConsumer.getStyle();
 		}
 
 		return null;
@@ -121,8 +127,12 @@ public class WText extends WWidget {
 
 		Style hoveredTextStyle = getTextStyleAt((int) click.x(), (int) click.y());
 		if (hoveredTextStyle != null) {
-			boolean processed = MinecraftClient.getInstance().currentScreen.handleTextClick(hoveredTextStyle);
-			return InputResult.of(processed);
+			MinecraftClient client = MinecraftClient.getInstance();
+			Screen screen = client.currentScreen;
+			if (hoveredTextStyle.getClickEvent() != null) {
+				ScreenAccessor.libgui$handleClickEvent(hoveredTextStyle.getClickEvent(), client, screen);
+				return InputResult.of(true);
+			}
 		}
 
 		return InputResult.IGNORED;

@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.11.+'
+	id 'fabric-loom' version '1.13.+'
 	id 'maven-publish'
 	id 'checkstyle'
 }
@@ -65,7 +65,7 @@ dependencies {
 			'fabric-lifecycle-events-v1': false,
 			'fabric-networking-api-v1': true,
 			'fabric-rendering-v1': false,
-			'fabric-resource-loader-v0': false,
+			'fabric-resource-loader-v1': false,
 	]
 	fabricApiModules.forEach { module, api ->
 		def dependency = fabricApi.module(module, project.fabric_version)

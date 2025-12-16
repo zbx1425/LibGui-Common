@@ -10,6 +10,7 @@
 	],
 	"client": [
 		"client.DrawContextAccessor",
+		"client.DrawnTextConsumerClickHandlerAccessor",
 		"client.HandledScreenMixin",
 		"client.MinecraftClientMixin",
 		"client.PressableWidgetAccessor",
