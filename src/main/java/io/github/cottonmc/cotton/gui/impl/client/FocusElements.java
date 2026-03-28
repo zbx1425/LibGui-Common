@@ -1,10 +1,10 @@
 package io.github.cottonmc.cotton.gui.impl.client;
 
+import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.navigation.FocusNavigationEvent;
-import net.minecraft.client.gui.ComponentPath;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 
 import io.github.cottonmc.cotton.gui.widget.WPanel;
 import io.github.cottonmc.cotton.gui.widget.WWidget;

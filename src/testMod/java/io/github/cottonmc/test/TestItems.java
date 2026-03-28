@@ -1,11 +1,11 @@
 package io.github.cottonmc.test;
 
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.registries.Registries;
 
 public final class TestItems {
 	public static final Item CLIENT_GUI = new GuiItem(new Item.Properties().setId(Keys.CLIENT_GUI));

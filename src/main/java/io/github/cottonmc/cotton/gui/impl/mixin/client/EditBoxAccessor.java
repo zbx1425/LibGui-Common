@@ -1,7 +1,7 @@
 package io.github.cottonmc.cotton.gui.impl.mixin.client;
 
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.WidgetSprites;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;

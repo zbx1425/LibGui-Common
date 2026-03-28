@@ -1,12 +1,12 @@
 package io.github.cottonmc.test;
 
-import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public final class TestBlocks {
 	public static final GuiBlock GUI = new GuiBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).setId(Keys.GUI));

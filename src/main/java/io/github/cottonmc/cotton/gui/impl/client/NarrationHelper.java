@@ -2,8 +2,8 @@ package io.github.cottonmc.cotton.gui.impl.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.widget.WPanel;

@@ -3,11 +3,11 @@ package io.github.cottonmc.cotton.gui.impl;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.FormattedCharSequence;
 
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import org.apache.logging.log4j.Level;

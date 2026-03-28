@@ -1,7 +1,7 @@
 package io.github.cottonmc.test.client;
 
-import net.minecraft.world.item.Items;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Items;
 
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WButton;
