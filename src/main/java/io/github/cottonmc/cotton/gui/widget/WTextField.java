@@ -435,7 +435,7 @@ public class WTextField extends WWidget {
 	@Environment(EnvType.CLIENT)
 	@Override
 	public InputResult onKeyPressed(KeyEvent input) {
-		if (!isEditable()) return InputResult.IGNORED;
+		if (!isEditable() || input.isEscape() || input.isCycleFocus()) return InputResult.IGNORED;
 
 		if (input.isCopy()) {
 			copySelection();
@@ -465,9 +465,6 @@ public class WTextField extends WWidget {
 					select = -1;
 				}
 				cursor = text.length();
-			}
-			default -> {
-				return InputResult.IGNORED;
 			}
 		}
 		scrollCursorIntoView();
