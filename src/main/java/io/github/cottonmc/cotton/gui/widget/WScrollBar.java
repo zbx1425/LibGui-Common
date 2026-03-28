@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.input.KeyEvent;
@@ -53,7 +53,7 @@ public class WScrollBar extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
 		var matrices = context.pose();
 		boolean darkMode = shouldRenderInDarkMode();
 		var textures = WidgetTextures.getScrollBarTextures(darkMode);

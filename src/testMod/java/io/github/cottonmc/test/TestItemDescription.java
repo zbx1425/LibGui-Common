@@ -2,7 +2,7 @@ package io.github.cottonmc.test;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.network.chat.Component;
@@ -149,7 +149,7 @@ public class TestItemDescription extends ItemSyncedGuiDescription {
 		}
 
 		@Override
-		public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+		public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
 			ScreenDrawing.coloredRect(context, x, y, this.getWidth(), this.getHeight(), color);
 		}
 	}

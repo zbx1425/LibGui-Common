@@ -1,21 +1,24 @@
 package io.github.cottonmc.cotton.gui.impl.client;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.MappingResolver;
+import net.minecraft.CrashReport;
+import net.minecraft.ReportedException;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.world.item.Item;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.Util;
-import net.minecraft.ReportedException;
-import net.minecraft.CrashReport;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -31,58 +34,20 @@ public final class ItemUseChecker {
 
 	// List of banned item use methods.
 	private static final List<Tuple<String, MethodType>> ITEM_USE_METHODS = Util.make(new ArrayList<>(), result -> {
-		MappingResolver resolver = FabricLoader.getInstance().getMappingResolver();
-
-		String hand = "class_1268";
-		String actionResult = "class_1269";
-		String livingEntity = "class_1309";
-		String playerEntity = "class_1657";
-		String itemStack = "class_1799";
-		String itemUsageContext = "class_1838";
-		String world = "class_1937";
-
-		// use
-		result.add(resolveItemMethod(resolver, "method_7836", actionResult, world, playerEntity, hand));
-		// useOnBlock
-		result.add(resolveItemMethod(resolver, "method_7884", actionResult, itemUsageContext));
-		// useOnEntity
-		result.add(resolveItemMethod(resolver, "method_7847", actionResult, itemStack, playerEntity, livingEntity, hand));
+		result.add(resolveItemMethod("use", InteractionResult.class, Level.class, Player.class, InteractionHand.class));
+		result.add(resolveItemMethod("useOn", InteractionResult.class, UseOnContext.class));
+		result.add(resolveItemMethod("interactLivingEntity", InteractionResult.class, ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class));
 	});
 
-	private static Tuple<String, MethodType> resolveItemMethod(MappingResolver resolver, String name, String returnType, String... parameterTypes) {
-		// Build intermediary descriptor for resolving the method in the mappings.
-		StringBuilder desc = new StringBuilder("(");
-		for (String type : parameterTypes) {
-			desc.append("Lnet/minecraft/").append(type).append(';');
-		}
-		desc.append(")Lnet/minecraft/").append(returnType).append(';');
-
-		// Remap the method name.
-		String deobfName = resolver.mapMethodName("intermediary", "net.minecraft.class_1792", name, desc.toString());
-
-		// Remap the descriptor types.
-		Function<String, Class<?>> getIntermediaryClass = className -> {
-			className = resolver.mapClassName("intermediary", "net.minecraft." + className);
-
-			try {
-				return Class.forName(className);
-			} catch (ClassNotFoundException e) {
-				throw new RuntimeException("Could not resolve class net.minecraft." + className, e);
-			}
-		};
-		Class<?>[] paramClasses = Arrays.stream(parameterTypes)
-				.map(getIntermediaryClass)
-				.toArray(Class[]::new);
-		Class<?> returnClass = getIntermediaryClass.apply(returnType);
-
-		// Check that the method actually exists.
+	private static Tuple<String, MethodType> resolveItemMethod(String name, Class<?> returnType, Class<?>... parameterTypes) {
+		// Check that the method exists
 		try {
-			Item.class.getMethod(deobfName, paramClasses);
+			Item.class.getMethod(name, parameterTypes);
 		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("Could not find Item method " + deobfName, e);
+			throw new RuntimeException("Could not find Item method " + name, e);
 		}
 
-		return new Tuple<>(deobfName, MethodType.methodType(returnClass, paramClasses));
+		return new Tuple<>(name, MethodType.methodType(returnType, parameterTypes));
 	}
 
 	/**

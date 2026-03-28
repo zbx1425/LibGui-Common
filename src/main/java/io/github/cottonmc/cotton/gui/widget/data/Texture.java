@@ -43,7 +43,7 @@ import java.util.Objects;
  * <code>{@link io.github.cottonmc.cotton.gui.client.ScreenDrawing ScreenDrawing}.texturedRect()</code>
  * when the {@link #type() type} is {@link Type#STANDALONE}. GUI sprites need specialised code for drawing them,
  * and they need to be drawn with specific {@code Texture}-accepting methods
- * or {@link net.minecraft.client.gui.GuiGraphics}.
+ * or {@link net.minecraft.client.gui.GuiGraphicsExtractor}.
  *
  * <p>GUI sprite textures don't currently support flipping the texture by flipping UV coordinates.
  *

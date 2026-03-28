@@ -24,15 +24,15 @@
 	},
 	"mixins": ["mixins.libgui.json"],
 	"depends": {
-		"java": ">=21",
-		"fabricloader": ">=0.18.3",
-		"fabric-api-base": "^1.0.5",
-		"fabric-lifecycle-events-v1": "^2.6.15",
-		"fabric-networking-api-v1": "^5.1.5",
-		"fabric-rendering-v1": "^16.2.6",
+		"java": ">=25",
+		"fabricloader": ">=0.18.5",
+		"fabric-api-base": "^2.0.3",
+		"fabric-lifecycle-events-v1": "^4.0.6",
+		"fabric-networking-api-v1": "^6.3.0",
+		"fabric-rendering-v1": "^23.0.4",
 		"fabric-resource-loader-v1": "*",
-		"minecraft": "=1.21.11",
-		"jankson": "^11.0.0",
+		"minecraft": ">=26.1",
+		"jankson": "^12.0.0",
 		"libninepatch": "^1.2.0"
 	},
 	"suggests": {

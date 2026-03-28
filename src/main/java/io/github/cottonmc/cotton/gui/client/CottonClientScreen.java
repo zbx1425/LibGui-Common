@@ -1,7 +1,7 @@
 package io.github.cottonmc.cotton.gui.client;
 
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -125,7 +125,7 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 		}
 	}
 
-	private void paint(GuiGraphics context, int mouseX, int mouseY, float delta) {
+	private void paint(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
 		if (description!=null) {
 			WPanel root = description.getRootPanel();
 			if (root!=null) {
@@ -140,19 +140,19 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 	}
 
 	@Override
-	public void render(GuiGraphics context, int mouseX, int mouseY, float partialTicks) {
-		super.render(context, mouseX, mouseY, partialTicks);
-		paint(context, mouseX, mouseY, partialTicks);
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+		super.extractRenderState(graphics, mouseX, mouseY, a);
+		paint(graphics, mouseX, mouseY, a);
 		
 		if (description!=null) {
 			WPanel root = description.getRootPanel();
 			if (root!=null) {
 				WWidget hitChild = root.hit(mouseX-left, mouseY-top);
-				if (hitChild!=null) hitChild.renderTooltip(context, left, top, mouseX-left, mouseY-top);
+				if (hitChild!=null) hitChild.renderTooltip(graphics, left, top, mouseX-left, mouseY-top);
 			}
 		}
 
-		VisualLogger.render(context);
+		VisualLogger.render(graphics);
 	}
 
 	@Override

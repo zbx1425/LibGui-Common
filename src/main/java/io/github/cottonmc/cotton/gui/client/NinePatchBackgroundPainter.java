@@ -2,7 +2,7 @@ package io.github.cottonmc.cotton.gui.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.impl.client.NinePatchTextureRendererImpl;
@@ -96,7 +96,7 @@ public final class NinePatchBackgroundPainter implements BackgroundPainter {
 	}
 
 	@Override
-	public void paintBackground(GuiGraphics context, int left, int top, WWidget panel) {
+	public void paintBackground(GuiGraphicsExtractor context, int left, int top, WWidget panel) {
 		var matrices = context.pose();
 		matrices.pushMatrix();
 		matrices.translate(left - leftPadding, top - topPadding);

@@ -2,7 +2,7 @@ package io.github.cottonmc.cotton.gui.widget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.item.ItemStack;
@@ -56,8 +56,8 @@ public class WItem extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
-		context.renderFakeItem(items.get(current), x + getWidth() / 2 - 8, y + getHeight() / 2 - 8);
+	public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
+		context.fakeItem(items.get(current), x + getWidth() / 2 - 8, y + getHeight() / 2 - 8);
 	}
 
 	/**

@@ -1,6 +1,6 @@
 package io.github.cottonmc.cotton.gui.impl.mixin.client;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
 import io.github.cottonmc.cotton.gui.client.CottonInventoryScreen;
@@ -12,15 +12,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractContainerScreen.class)
 abstract class AbstractContainerScreenMixin {
 	@Inject(
-			method = "renderContents",
+			method = "extractContents",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V",
+					target = "Lnet/minecraft/client/gui/screens/Screen;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V",
 					shift = At.Shift.AFTER
 			),
 			allow = 1
 	)
-	private void onSuperRender(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo info) {
+	private void onSuperRender(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta, CallbackInfo info) {
 		if ((Object) this instanceof CottonInventoryScreen<?> cottonInventoryScreen) {
 			cottonInventoryScreen.paintDescription(context, mouseX, mouseY, delta);
 		}

@@ -5,7 +5,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarratedElementType;
@@ -67,7 +67,7 @@ public class WLabel extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
 		int yOffset = TextAlignment.getTextOffsetY(verticalAlignment, height, 1);
 
 		if (getDrawShadows()) {

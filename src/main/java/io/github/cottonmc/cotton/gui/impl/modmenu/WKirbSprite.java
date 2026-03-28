@@ -2,7 +2,7 @@ package io.github.cottonmc.cotton.gui.impl.modmenu;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
@@ -54,7 +54,7 @@ public class WKirbSprite extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
 		long now = System.nanoTime() / 1_000_000L;
 
 		if (pendingFrames.isEmpty()) {

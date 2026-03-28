@@ -3,7 +3,7 @@ package io.github.cottonmc.cotton.gui.widget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.network.chat.Component;
@@ -153,7 +153,7 @@ public class WLabeledSlider extends WAbstractSlider {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
 		int aWidth = axis == Axis.HORIZONTAL ? width : height;
 		int aHeight = axis == Axis.HORIZONTAL ? height : width;
 		int rotMouseX = axis == Axis.HORIZONTAL

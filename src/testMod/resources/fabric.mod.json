@@ -25,6 +25,6 @@
 		"fabricloader": ">=0.4.0",
 		"libgui": "*",
 		"jankson": "*",
-		"fabric": "*"
+		"fabric-api": "*"
 	}
 }

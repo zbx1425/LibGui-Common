@@ -1,22 +1,22 @@
 package io.github.cottonmc.test;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuType;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.SlotAccess;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Registry;
-import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,7 +42,7 @@ public class LibGuiTest implements ModInitializer {
 			return new TestDescription(GUI_SCREEN_HANDLER_TYPE, syncId, inventory, ContainerLevelAccess.NULL);
 		}, FeatureFlagSet.of(FeatureFlags.VANILLA));
 		Registry.register(BuiltInRegistries.MENU, id("gui"), GUI_SCREEN_HANDLER_TYPE);
-		ITEM_SCREEN_HANDLER_TYPE = new ExtendedScreenHandlerType<>((syncId, inventory, slot) -> {
+		ITEM_SCREEN_HANDLER_TYPE = new ExtendedMenuType<>((syncId, inventory, slot) -> {
 			SlotAccess handStack = SlotAccess.forEquipmentSlot(inventory.player, slot);
 			return new TestItemDescription(syncId, inventory, handStack);
 		}, ByteBufCodecs.fromCodec(EquipmentSlot.CODEC).cast());

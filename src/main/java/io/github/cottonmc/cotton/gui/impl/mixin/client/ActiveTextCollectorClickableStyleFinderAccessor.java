@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import java.util.function.Consumer;
 
 @Mixin(ActiveTextCollector.ClickableStyleFinder.class)
-public interface DrawnTextConsumerClickHandlerAccessor {
+public interface ActiveTextCollectorClickableStyleFinderAccessor {
 	@Accessor("styleScanner")
 	@Mutable
 	void libgui$setStyleScanner(Consumer<Style> setStyleCallback);

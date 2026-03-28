@@ -3,15 +3,15 @@ package io.github.cottonmc.cotton.gui.widget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.Container;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -427,7 +427,7 @@ public class WItemSlot extends WWidget {
 			Minecraft client = Minecraft.getInstance();
 
 			ValidatedSlot peer = peers.get(focusedSlot);
-			client.gameMode.handleInventoryMouseClick(handler.containerId, peer.index, 0, ClickType.PICKUP, client.player);
+			client.gameMode.handleContainerInput(handler.containerId, peer.index, 0, ContainerInput.PICKUP, client.player);
 			return InputResult.PROCESSED;
 		}
 
@@ -541,7 +541,7 @@ public class WItemSlot extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
 		if (backgroundPainter != null) {
 			backgroundPainter.paintBackground(context, x, y, this);
 		}

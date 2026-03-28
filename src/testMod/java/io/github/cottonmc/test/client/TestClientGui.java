@@ -2,7 +2,7 @@ package io.github.cottonmc.test.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -149,7 +149,7 @@ public class TestClientGui extends LightweightGuiDescription {
 		}
 		
 		@Override
-		public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+		public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
 			ScreenDrawing.coloredRect(context, x, y, this.getWidth(), this.getHeight(), color);
 		}
 	}

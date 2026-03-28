@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.input.CharacterEvent;
@@ -180,19 +180,19 @@ public class WTextField extends WWidget {
 	}
 
 	@Environment(EnvType.CLIENT)
-	protected void renderBox(GuiGraphics context, int x, int y) {
+	protected void renderBox(GuiGraphicsExtractor context, int x, int y) {
 		var texture = EditBoxAccessor.libgui$getTextures().get(isEditable(), isFocused());
 		context.blitSprite(RenderPipelines.GUI_TEXTURED, texture, x - 1, y - 1, width + 2, height + 2);
 	}
 
 	@Environment(EnvType.CLIENT)
-	protected void renderText(GuiGraphics context, int x, int y, String visibleText) {
+	protected void renderText(GuiGraphicsExtractor context, int x, int y, String visibleText) {
 		int textColor = this.editable ? this.enabledColor : this.disabledColor;
-		context.drawString(getTextRenderer(), visibleText, x + TEXT_PADDING_X, y + TEXT_PADDING_Y, textColor, true);
+		context.text(getTextRenderer(), visibleText, x + TEXT_PADDING_X, y + TEXT_PADDING_Y, textColor, true);
 	}
 
 	@Environment(EnvType.CLIENT)
-	protected void renderCursor(GuiGraphics context, int x, int y, String visibleText) {
+	protected void renderCursor(GuiGraphicsExtractor context, int x, int y, String visibleText) {
 		if (this.tickCount / 6 % 2 == 0) return;
 		if (this.cursor < this.scrollOffset) return;
 		if (this.cursor > this.scrollOffset + visibleText.length()) return;
@@ -201,13 +201,13 @@ public class WTextField extends WWidget {
 	}
 
 	@Environment(EnvType.CLIENT)
-	protected void renderSuggestion(GuiGraphics context, int x, int y) {
+	protected void renderSuggestion(GuiGraphicsExtractor context, int x, int y) {
 		if (this.suggestion == null) return;
-		context.drawString(getTextRenderer(), suggestion, x + TEXT_PADDING_X, y + TEXT_PADDING_Y, this.suggestionColor, true);
+		context.text(getTextRenderer(), suggestion, x + TEXT_PADDING_X, y + TEXT_PADDING_Y, this.suggestionColor, true);
 	}
 
 	@Environment(EnvType.CLIENT)
-	protected void renderSelection(GuiGraphics context, int x, int y, String visibleText) {
+	protected void renderSelection(GuiGraphicsExtractor context, int x, int y, String visibleText) {
 		if (select == cursor || select == -1) return;
 
 		int textLength = visibleText.length();
@@ -228,7 +228,7 @@ public class WTextField extends WWidget {
 	}
 
 	@Environment(EnvType.CLIENT)
-	protected void renderTextField(GuiGraphics context, int x, int y) {
+	protected void renderTextField(GuiGraphicsExtractor context, int x, int y) {
 		checkScrollOffset();
 		String visibleText = getTextRenderer().plainSubstrByWidth(this.text.substring(this.scrollOffset), this.width - 2 * TEXT_PADDING_X);
 		renderBox(context, x, y);
@@ -243,7 +243,7 @@ public class WTextField extends WWidget {
 	}
 
 	@Environment(EnvType.CLIENT)
-	private void drawHighlight(GuiGraphics context, int x, int y, int width, int height) {
+	private void drawHighlight(GuiGraphicsExtractor context, int x, int y, int width, int height) {
 		context.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, x, y, x + width, y + height, 0xFF_0000FF);
 	}
 
@@ -305,7 +305,7 @@ public class WTextField extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
 		renderTextField(context, x, y);
 	}
 

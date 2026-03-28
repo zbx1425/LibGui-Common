@@ -1,7 +1,7 @@
 package io.github.cottonmc.cotton.gui.client;
 
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.impl.LibGuiCommon;
@@ -28,7 +28,7 @@ public interface BackgroundPainter {
 	 * @param top     The absolute position of the top of the panel, in gui-screen coordinates
 	 * @param panel   The panel being painted
 	 */
-	public void paintBackground(GuiGraphics context, int left, int top, WWidget panel);
+	public void paintBackground(GuiGraphicsExtractor context, int left, int top, WWidget panel);
 
 	/**
 	 * The {@code VANILLA} background painter draws a vanilla-like GUI panel using nine-patch textures.
@@ -88,7 +88,7 @@ public interface BackgroundPainter {
 	 *
 	 * @param panelColor the panel background color
 	 * @return a colorful gui panel painter
-	 * @see ScreenDrawing#drawGuiPanel(GuiGraphics, int, int, int, int, int)
+	 * @see ScreenDrawing#drawGuiPanel(GuiGraphicsExtractor, int, int, int, int, int)
 	 */
 	public static BackgroundPainter createColorful(int panelColor) {
 		return (context, left, top, panel) -> {

@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.input.CharacterEvent;
@@ -326,7 +326,7 @@ public class WWidget {
 	 * @since 2.0.0
 	 */
 	@Environment(EnvType.CLIENT)
-	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphicsExtractor context, int x, int y, int mouseX, int mouseY) {
 	}
 
 	/**
@@ -353,7 +353,7 @@ public class WWidget {
 	 * @param tY      the Y coordinate of the tooltip
 	 */
 	@Environment(EnvType.CLIENT)
-	public void renderTooltip(GuiGraphics context, int x, int y, int tX, int tY) {
+	public void renderTooltip(GuiGraphicsExtractor context, int x, int y, int tX, int tY) {
 		TooltipBuilder builder = new TooltipBuilder();
 		addTooltip(builder);
 
@@ -498,7 +498,7 @@ public class WWidget {
 	 *
 	 * <p>Hovering is used by LibGui itself mostly for narration support.
 	 * For rendering, it might be preferable that you check the mouse coordinates in
-	 * {@link #paint(GuiGraphics, int, int, int, int) paint()} directly.
+	 * {@link #paint(GuiGraphicsExtractor, int, int, int, int) paint()} directly.
 	 * That lets you react to different parts of the widget being hovered over.
 	 *
 	 * @return the {@code hovered} property

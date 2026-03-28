@@ -124,8 +124,8 @@ public class ScreenNetworkingImpl implements ScreenNetworking {
 	}
 
 	public static void init() {
-		PayloadTypeRegistry.playS2C().register(ScreenMessage.ID, ScreenMessage.CODEC);
-		PayloadTypeRegistry.playC2S().register(ScreenMessage.ID, ScreenMessage.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(ScreenMessage.ID, ScreenMessage.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(ScreenMessage.ID, ScreenMessage.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(ScreenMessage.ID, (payload, context) -> {
 			handle(context.server(), context.player(), payload);
 		});

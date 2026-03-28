@@ -9,14 +9,15 @@
 		"AbstractContainerMenuAccessor"
 	],
 	"client": [
-		"client.GuiGraphicsAccessor",
-		"client.DrawnTextConsumerClickHandlerAccessor",
-		"client.AbstractContainerScreenMixin",
-		"client.MinecraftMixin",
 		"client.AbstractButtonAccessor",
-		"client.ScreenAccessor",
+		"client.AbstractContainerScreenAccessor",
+		"client.AbstractContainerScreenMixin",
 		"client.AbstractSliderButtonAccessor",
-		"client.EditBoxAccessor"
+		"client.ActiveTextCollectorClickableStyleFinderAccessor",
+		"client.EditBoxAccessor",
+		"client.GuiGraphicsExtractorAccessor",
+		"client.MinecraftMixin",
+		"client.ScreenAccessor"
 	],
 
 	"injectors": {
