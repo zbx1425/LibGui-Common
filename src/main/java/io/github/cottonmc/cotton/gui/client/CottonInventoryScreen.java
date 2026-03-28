@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class CottonInventoryScreen<T extends SyncedGuiDescription> extends AbstractContainerScreen<T> implements CottonScreenImpl {
 	private static final VisualLogger LOGGER = new VisualLogger(CottonInventoryScreen.class);
-	protected SyncedGuiDescription description; // TODO: Make final
+	protected final SyncedGuiDescription description;
 	@Nullable protected WWidget lastResponder = null;
 	private final MouseInputHandler<CottonInventoryScreen<T>> mouseInputHandler = new MouseInputHandler<>(this);
 
@@ -303,11 +303,9 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 	 * @since 9.2.0
 	 */
 	public void paintDescription(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
-		if (description!=null) {
-			WPanel root = description.getRootPanel();
-			if (root!=null) {
-				root.paint(context, leftPos, topPos, mouseX- leftPos, mouseY- topPos);
-			}
+		WPanel root = description.getRootPanel();
+		if (root!=null) {
+			root.paint(context, leftPos, topPos, mouseX- leftPos, mouseY- topPos);
 		}
 	}
 
@@ -320,18 +318,16 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 	@Override
 	protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
 		super.extractTooltip(graphics, mouseX, mouseY);
-		if (description!=null) {
-			WPanel root = description.getRootPanel();
-			if (root!=null) {
-				WWidget hitChild = root.hit(mouseX- leftPos, mouseY- topPos);
-				if (hitChild!=null) hitChild.renderTooltip(graphics, leftPos, topPos, mouseX- leftPos, mouseY- topPos);
-			}
+		WPanel root = description.getRootPanel();
+		if (root!=null) {
+			WWidget hitChild = root.hit(mouseX- leftPos, mouseY- topPos);
+			if (hitChild!=null) hitChild.renderTooltip(graphics, leftPos, topPos, mouseX- leftPos, mouseY- topPos);
 		}
 	}
 
 	@Override
 	protected void extractLabels(GuiGraphicsExtractor context, int mouseX, int mouseY) {
-		if (description != null && description.isTitleVisible()) {
+		if (description.isTitleVisible()) {
 			int width = description.getRootPanel().getWidth();
 			ScreenDrawing.drawString(context, getTitle().getVisualOrderText(), description.getTitleAlignment(), titleLabelX, titleLabelY, width - 2 * titleLabelX, description.getTitleColor());
 		}
@@ -342,27 +338,23 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 	@Override
 	protected void containerTick() {
 		super.containerTick();
-		if (description!=null) {
-			WPanel root = description.getRootPanel();
-			if (root!=null) {
-				root.tick();
-			}
-
-			description.sendDataSlotUpdates();
+		WPanel root = description.getRootPanel();
+		if (root!=null) {
+			root.tick();
 		}
+
+		description.sendDataSlotUpdates();
 	}
 
 	@Override
 	protected void updateNarratedWidget(NarrationElementOutput builder) {
-		if (description != null) NarrationHelper.addNarrations(description.getRootPanel(), builder);
+		NarrationHelper.addNarrations(description.getRootPanel(), builder);
 	}
 
 	@Override
 	public void added() {
-		if (description != null) {
-			ScreenNetworking networking = description.getNetworking(NetworkSide.CLIENT);
-			((ScreenNetworkingImpl) networking).markReady();
-			networking.send(ScreenNetworkingImpl.CLIENT_READY_MESSAGE_KEY, Unit.INSTANCE);
-		}
+		ScreenNetworking networking = description.getNetworking(NetworkSide.CLIENT);
+		((ScreenNetworkingImpl) networking).markReady();
+		networking.send(ScreenNetworkingImpl.CLIENT_READY_MESSAGE_KEY, Unit.INSTANCE);
 	}
 }

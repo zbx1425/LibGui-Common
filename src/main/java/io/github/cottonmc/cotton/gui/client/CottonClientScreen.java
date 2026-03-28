@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class CottonClientScreen extends Screen implements CottonScreenImpl {
 	private static final VisualLogger LOGGER = new VisualLogger(CottonInventoryScreen.class);
-	protected GuiDescription description; // TODO: Make final
+	protected final GuiDescription description;
 	protected int left = 0;
 	protected int top = 0;
 
@@ -115,36 +115,32 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 	 * @param screenHeight the height of the screen
 	 */
 	protected void reposition(int screenWidth, int screenHeight) {
-		if (description!=null) {
-			WPanel root = description.getRootPanel();
-			if (root!=null) {
-				titleX = description.getTitlePos().x();
-				titleY = description.getTitlePos().y();
+		WPanel root = description.getRootPanel();
+		if (root != null) {
+			titleX = description.getTitlePos().x();
+			titleY = description.getTitlePos().y();
 
-				if (!description.isFullscreen()) {
-					this.left = (screenWidth - root.getWidth()) / 2;
-					this.top = (screenHeight - root.getHeight()) / 2;
-				} else {
-					this.left = 0;
-					this.top = 0;
+			if (!description.isFullscreen()) {
+				this.left = (screenWidth - root.getWidth()) / 2;
+				this.top = (screenHeight - root.getHeight()) / 2;
+			} else {
+				this.left = 0;
+				this.top = 0;
 
-					root.setSize(screenWidth, screenHeight);
-				}
+				root.setSize(screenWidth, screenHeight);
 			}
 		}
 	}
 
 	private void paint(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
-		if (description!=null) {
-			WPanel root = description.getRootPanel();
-			if (root!=null) {
-				root.paint(context, left, top, mouseX-left, mouseY-top);
-			}
+		WPanel root = description.getRootPanel();
+		if (root!=null) {
+			root.paint(context, left, top, mouseX-left, mouseY-top);
+		}
 
-			if (getTitle() != null && description.isTitleVisible()) {
-				int width = description.getRootPanel().getWidth();
-				ScreenDrawing.drawString(context, getTitle().getVisualOrderText(), description.getTitleAlignment(), left + titleX, top + titleY, width - 2 * titleX, description.getTitleColor());
-			}
+		if (getTitle() != null && description.isTitleVisible()) {
+			int width = description.getRootPanel().getWidth();
+			ScreenDrawing.drawString(context, getTitle().getVisualOrderText(), description.getTitleAlignment(), left + titleX, top + titleY, width - 2 * titleX, description.getTitleColor());
 		}
 	}
 
@@ -153,12 +149,10 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 		super.extractRenderState(graphics, mouseX, mouseY, a);
 		paint(graphics, mouseX, mouseY, a);
 		
-		if (description!=null) {
-			WPanel root = description.getRootPanel();
-			if (root!=null) {
-				WWidget hitChild = root.hit(mouseX-left, mouseY-top);
-				if (hitChild!=null) hitChild.renderTooltip(graphics, left, top, mouseX-left, mouseY-top);
-			}
+		WPanel root = description.getRootPanel();
+		if (root!=null) {
+			WWidget hitChild = root.hit(mouseX-left, mouseY-top);
+			if (hitChild!=null) hitChild.renderTooltip(graphics, left, top, mouseX-left, mouseY-top);
 		}
 
 		VisualLogger.render(graphics);
@@ -272,6 +266,6 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 
 	@Override
 	protected void updateNarratedWidget(NarrationElementOutput builder) {
-		if (description != null) NarrationHelper.addNarrations(description.getRootPanel(), builder);
+		NarrationHelper.addNarrations(description.getRootPanel(), builder);
 	}
 }
