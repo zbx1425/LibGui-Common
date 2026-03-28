@@ -4,6 +4,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.IMEPreeditOverlay;
+import net.minecraft.client.input.PreeditEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -33,6 +35,9 @@ public class WTextField extends WWidget {
 	@Environment(EnvType.CLIENT)
 	@Nullable
 	private Font textRenderer;
+
+	@Environment(EnvType.CLIENT)
+	private @Nullable IMEPreeditOverlay preeditOverlay;
 
 	private String text = "";
 	private int maxLength = 16;
@@ -227,6 +232,19 @@ public class WTextField extends WWidget {
 		drawHighlight(context, x + TEXT_PADDING_X + leftCaret, y + CURSOR_PADDING_Y, selectionWidth, CURSOR_HEIGHT);
 	}
 
+	/**
+	 * Renders the IME preedit overlay.
+	 * @since 16.0.0
+	 */
+	@Environment(EnvType.CLIENT)
+	protected void renderPreeditOverlay(GuiGraphicsExtractor graphics, int x, int y, String visibleText, @Nullable IMEPreeditOverlay overlay) {
+		if (overlay != null) {
+			int cursorOffset = getTextRenderer().width(visibleText.substring(0, this.cursor - this.scrollOffset));
+			overlay.updateInputPosition(x + TEXT_PADDING_X + cursorOffset, y + TEXT_PADDING_Y);
+			graphics.setPreeditOverlay(overlay);
+		}
+	}
+
 	@Environment(EnvType.CLIENT)
 	protected void renderTextField(GuiGraphicsExtractor context, int x, int y) {
 		checkScrollOffset();
@@ -238,6 +256,7 @@ public class WTextField extends WWidget {
 		}
 		if (this.isFocused()) {
 			renderCursor(context, x, y, visibleText);
+			renderPreeditOverlay(context, x, y, visibleText, preeditOverlay);
 		}
 		renderSelection(context, x, y, visibleText);
 	}
@@ -296,6 +315,11 @@ public class WTextField extends WWidget {
 	}
 
 	public boolean canFocus() {
+		return true;
+	}
+
+	@Override
+	public boolean canFocusForTextInput() {
 		return true;
 	}
 
@@ -469,6 +493,12 @@ public class WTextField extends WWidget {
 		}
 		scrollCursorIntoView();
 
+		return InputResult.PROCESSED;
+	}
+
+	@Override
+	public InputResult onPreeditUpdated(@Nullable PreeditEvent event) {
+		preeditOverlay = event != null ? new IMEPreeditOverlay(event, getTextRenderer(), getTextRenderer().lineHeight + 1) : null;
 		return InputResult.PROCESSED;
 	}
 

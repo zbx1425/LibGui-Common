@@ -207,4 +207,28 @@ public interface GuiDescription {
 	default TriState isDarkMode() {
 		return TriState.DEFAULT;
 	}
+
+	/**
+	 * Adds a listener that is called when the focused widget changes.
+	 *
+	 * @param listener the listener
+	 * @since 16.0.0
+	 */
+	void addFocusChangeListener(FocusChangeListener listener);
+
+	/**
+	 * A listener for focus change events.
+	 *
+	 * @since 16.0.0
+	 */
+	@FunctionalInterface
+	interface FocusChangeListener {
+		/**
+		 * Called when the focused widget changes.
+		 *
+		 * @param from the previous focused widget
+		 * @param to   the new focused widget
+		 */
+		void onFocusChanged(@Nullable WWidget from, @Nullable WWidget to);
+	}
 }

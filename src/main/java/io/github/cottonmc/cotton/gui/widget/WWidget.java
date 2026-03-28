@@ -3,12 +3,13 @@ package io.github.cottonmc.cotton.gui.widget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.PreeditEvent;
 
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.LibGui;
@@ -265,6 +266,18 @@ public class WWidget {
 		return InputResult.IGNORED;
 	}
 
+	/**
+	 * Notifies this widget the preedit overlay has been updated.
+	 *
+	 * @param event the preedit event
+	 * @return {@link InputResult#PROCESSED} if the event was handled, {@link InputResult#IGNORED} otherwise.
+	 * @since 16.0.0
+	 */
+	@Environment(EnvType.CLIENT)
+	public InputResult onPreeditUpdated(@Nullable PreeditEvent event) {
+		return InputResult.IGNORED;
+	}
+
 	/** Notifies this widget that it has gained focus */
 	public void onFocusGained() {
 	}
@@ -312,6 +325,17 @@ public class WWidget {
 	 * @return true if this widget can be focused, false otherwise
 	 */
 	public boolean canFocus() {
+		return false;
+	}
+
+	/**
+	 * Tests whether this widget can have the focus in the GUI for text input.
+	 *
+	 * <p>Text input widgets <strong>must</strong> override this to provide proper input method editor support.
+	 *
+	 * @return true if this widget can be focused for text input, false otherwise
+	 */
+	public boolean canFocusForTextInput() {
 		return false;
 	}
 

@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.PreeditEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.CommonComponents;
@@ -38,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class CottonInventoryScreen<T extends SyncedGuiDescription> extends AbstractContainerScreen<T> implements CottonScreenImpl {
 	private static final VisualLogger LOGGER = new VisualLogger(CottonInventoryScreen.class);
-	protected SyncedGuiDescription description;
+	protected SyncedGuiDescription description; // TODO: Make final
 	@Nullable protected WWidget lastResponder = null;
 	private final MouseInputHandler<CottonInventoryScreen<T>> mouseInputHandler = new MouseInputHandler<>(this);
 
@@ -69,6 +70,14 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 		((AbstractContainerScreenAccessor) this).setImageWidth(18 * 9);
 		((AbstractContainerScreenAccessor) this).setImageHeight(18 * 9);
 		description.getRootPanel().validate(description);
+		description.addFocusChangeListener((from, to) -> {
+			boolean fromTextInput = from != null && from.canFocusForTextInput();
+			boolean toTextInput = to != null && to.canFocusForTextInput();
+
+			if (from != to && (fromTextInput || toTextInput)) {
+				minecraft.onTextInputFocusChange(this, toTextInput);
+			}
+		});
 	}
 
 	/**
@@ -272,6 +281,16 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 		}
 
 		return super.keyReleased(input);
+	}
+
+	@Override
+	public boolean preeditUpdated(@Nullable PreeditEvent event) {
+		WWidget focus = description.getFocus();
+		if (focus != null && focus.onPreeditUpdated(event) == InputResult.PROCESSED) {
+			return true;
+		}
+
+		return super.preeditUpdated(event);
 	}
 
 	/**

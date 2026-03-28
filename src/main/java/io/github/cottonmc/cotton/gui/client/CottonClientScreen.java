@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.PreeditEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class CottonClientScreen extends Screen implements CottonScreenImpl {
 	private static final VisualLogger LOGGER = new VisualLogger(CottonInventoryScreen.class);
-	protected GuiDescription description;
+	protected GuiDescription description; // TODO: Make final
 	protected int left = 0;
 	protected int top = 0;
 
@@ -57,6 +58,14 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 		super(title);
 		this.description = description;
 		description.getRootPanel().validate(description);
+		description.addFocusChangeListener((from, to) -> {
+			boolean fromTextInput = from != null && from.canFocusForTextInput();
+			boolean toTextInput = to != null && to.canFocusForTextInput();
+
+			if (from != to && (fromTextInput || toTextInput)) {
+				minecraft.onTextInputFocusChange(this, toTextInput);
+			}
+		});
 	}
 
 	@Override
@@ -249,6 +258,16 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 		}
 
 		return super.keyReleased(input);
+	}
+
+	@Override
+	public boolean preeditUpdated(@Nullable PreeditEvent event) {
+		WWidget focus = description.getFocus();
+		if (focus != null && focus.onPreeditUpdated(event) == InputResult.PROCESSED) {
+			return true;
+		}
+
+		return super.preeditUpdated(event);
 	}
 
 	@Override

@@ -13,6 +13,10 @@ import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * A GuiDescription without any associated Minecraft classes
  */
@@ -28,6 +32,7 @@ public class LightweightGuiDescription implements GuiDescription {
 	protected HorizontalAlignment titleAlignment = HorizontalAlignment.LEFT;
 	private Vec2i titlePos = new Vec2i(8, 6);
 	private boolean useDefaultRootBackground = true;
+	private final List<FocusChangeListener> focusChangeListeners = new ArrayList<>();
 	
 	@Override
 	public WPanel getRootPanel() {
@@ -109,8 +114,13 @@ public class LightweightGuiDescription implements GuiDescription {
 		if (focus==widget) return; //Nothing happens if we're already focused
 		if (!widget.canFocus()) return; //This is kind of a gotcha but needs to happen
 		if (focus!=null) focus.onFocusLost();
+		var oldFocus = focus;
 		focus = widget;
 		focus.onFocusGained();
+
+		for (FocusChangeListener listener : focusChangeListeners) {
+			listener.onFocusChanged(oldFocus, focus);
+		}
 	}
 
 	@Override
@@ -118,6 +128,10 @@ public class LightweightGuiDescription implements GuiDescription {
 		if (focus==widget) {
 			focus = null;
 			widget.onFocusLost();
+
+			for (FocusChangeListener listener : focusChangeListeners) {
+				listener.onFocusChanged(widget, null);
+			}
 		}
 	}
 
@@ -159,5 +173,10 @@ public class LightweightGuiDescription implements GuiDescription {
 	@Override
 	public void setTitlePos(Vec2i titlePos) {
 		this.titlePos = titlePos;
+	}
+
+	@Override
+	public void addFocusChangeListener(FocusChangeListener listener) {
+		focusChangeListeners.add(Objects.requireNonNull(listener, "Listener cannot be null"));
 	}
 }
