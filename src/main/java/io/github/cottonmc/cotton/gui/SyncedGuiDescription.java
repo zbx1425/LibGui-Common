@@ -56,7 +56,17 @@ public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDe
 	
 	protected Container blockInventory;
 	protected Inventory playerInventory;
+
+	/**
+	 * @deprecated Use the method {@link #getLevel()} instead.
+	 */
+	@Deprecated(forRemoval = true)
 	protected Level world;
+
+	/**
+	 * @deprecated Use the methods {@link #getContainerData()} and {@link #setContainerData(ContainerData)} instead.
+	 */
+	@Deprecated(forRemoval = true)
 	protected ContainerData propertyDelegate;
 	
 	protected WPanel rootPanel = new WGridPanel().setInsets(Insets.ROOT_PANEL);
@@ -98,17 +108,17 @@ public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDe
 	 * @param syncId           the current sync ID
 	 * @param playerInventory  the player inventory of the player viewing this screen
 	 * @param blockInventory   the block inventory of a corresponding container block, or null if not found or applicable
-	 * @param propertyDelegate a property delegate whose properties, if any, will automatically be {@linkplain #addDataSlots(ContainerData) added}
+	 * @param containerData    a container data holder whose properties, if any, will automatically be {@linkplain #addDataSlots(ContainerData) added}
 	 */
-	public SyncedGuiDescription(MenuType<?> type, int syncId, Inventory playerInventory, @Nullable Container blockInventory, @Nullable ContainerData propertyDelegate) {
+	public SyncedGuiDescription(MenuType<?> type, int syncId, Inventory playerInventory, @Nullable Container blockInventory, @Nullable ContainerData containerData) {
 		super(type, syncId);
 		this.blockInventory = blockInventory;
 		this.playerInventory = playerInventory;
 		this.world = playerInventory.player.level();
-		this.propertyDelegate = propertyDelegate;
+		this.propertyDelegate = containerData;
 		this.networking = new ScreenNetworkingImpl(this, getNetworkSide());
 		this.inactiveNetworking = new ScreenNetworkingImpl.DummyNetworking();
-		if (propertyDelegate!=null && propertyDelegate.getCount()>0) this.addDataSlots(propertyDelegate);
+		if (containerData!=null && containerData.getCount()>0) this.addDataSlots(containerData);
 		if (blockInventory != null) blockInventory.startOpen(playerInventory.player);
 	}
 	
@@ -334,13 +344,13 @@ public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDe
 
 	@Nullable
 	@Override
-	public ContainerData getPropertyDelegate() {
+	public ContainerData getContainerData() {
 		return propertyDelegate;
 	}
 	
 	@Override
-	public GuiDescription setPropertyDelegate(ContainerData delegate) {
-		this.propertyDelegate = delegate;
+	public GuiDescription setContainerData(ContainerData data) {
+		this.propertyDelegate = data;
 		return this;
 	}
 
@@ -579,8 +589,18 @@ public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDe
 	/**
 	 * {@return the world of this GUI description's player}
 	 * @since 10.0.0
+	 * @deprecated Replaced with {@link #getLevel()}.
 	 */
+	@Deprecated(forRemoval = true)
 	public Level getWorld() {
+		return world;
+	}
+
+	/**
+	 * {@return the level of this GUI description's player}
+	 * @since 16.0.0
+	 */
+	public Level getLevel() {
 		return world;
 	}
 

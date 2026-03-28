@@ -83,13 +83,13 @@ public class LightweightGuiDescription implements GuiDescription {
 
 	@Override
 	@Nullable
-	public ContainerData getPropertyDelegate() {
+	public ContainerData getContainerData() {
 		return propertyDelegate;
 	}
 
 	@Override
-	public GuiDescription setPropertyDelegate(ContainerData delegate) {
-		this.propertyDelegate = delegate;
+	public GuiDescription setContainerData(ContainerData data) {
+		this.propertyDelegate = data;
 		return this;
 	}
 

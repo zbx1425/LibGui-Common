@@ -49,8 +49,15 @@ public interface GuiDescription {
 	 */
 	GuiDescription setTitleColor(int lightColor, int darkColor);
 
-	/** Sets the object which manages the integer properties used by WBars */
-	public GuiDescription setPropertyDelegate(ContainerData delegate);
+	/**
+	 * Sets the object which manages the integer properties used by WBars.
+	 *
+	 * @deprecated Replaced with {@link #setContainerData(ContainerData)}.
+	 */
+	@Deprecated(forRemoval = true)
+	default GuiDescription setPropertyDelegate(ContainerData delegate) {
+		return setContainerData(delegate);
+	}
 	
 	/** Typical users won't call this. This adds a Slot to Container/Controller-based guis, and does nothing on lightweight guis. */
 	public void addSlotPeer(ValidatedSlot slot);
@@ -78,9 +85,31 @@ public interface GuiDescription {
 	 */
 	public void setUseDefaultRootBackground(boolean useDefaultRootBackground);
 
-	/** Gets the object which manages the integer properties used by WBars and such. */
+	/**
+	 * Gets the object which manages the integer properties used by WBars and such.
+	 *
+	 * @deprecated Replaced with {@link #getContainerData()}.
+	 */
+	@Deprecated(forRemoval = true)
 	@Nullable
-	public ContainerData getPropertyDelegate();
+	default ContainerData getPropertyDelegate() {
+		return getContainerData();
+	}
+
+	/**
+	 * Gets the object which manages the integer properties used by WBars and such.
+	 *
+	 * @since 16.0.0
+	 */
+	@Nullable
+	ContainerData getContainerData();
+
+	/**
+	 * Sets the object which manages the integer properties used by WBars.
+	 *
+	 * @since 16.0.0
+	 */
+	GuiDescription setContainerData(ContainerData data);
 	
 	/** Tests whether the widget is the currently-focused one. */
 	public boolean isFocused(WWidget widget);
