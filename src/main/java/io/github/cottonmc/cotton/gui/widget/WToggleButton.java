@@ -18,7 +18,7 @@ import io.github.cottonmc.cotton.gui.impl.LibGuiCommon;
 import io.github.cottonmc.cotton.gui.impl.client.NarrationMessages;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.Texture;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -32,10 +32,10 @@ public class WToggleButton extends WWidget {
 	protected Texture offImage;
 	protected Texture focusImage = DEFAULT_FOCUS_IMAGE;
 
-	@Nullable protected Component label = null;
+	protected @Nullable Component label = null;
 
 	protected boolean isOn = false;
-	@Nullable protected Consumer<Boolean> onToggle = null;
+	protected @Nullable Consumer<Boolean> onToggle = null;
 
 	protected int color = WLabel.DEFAULT_TEXT_COLOR;
 	protected int darkmodeColor = WLabel.DEFAULT_DARKMODE_TEXT_COLOR;
@@ -161,8 +161,7 @@ public class WToggleButton extends WWidget {
 	public boolean getToggle() { return this.isOn; }
 	public void setToggle(boolean on) { this.isOn = on; }
 
-	@Nullable
-	public Consumer<Boolean> getOnToggle() {
+	public @Nullable Consumer<Boolean> getOnToggle() {
 		return this.onToggle;
 	}
 
@@ -171,8 +170,7 @@ public class WToggleButton extends WWidget {
 		return this;
 	}
 
-	@Nullable
-	public Component getLabel() {
+	public @Nullable Component getLabel() {
 		return label;
 	}
 

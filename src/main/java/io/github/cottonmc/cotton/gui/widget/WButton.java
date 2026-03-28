@@ -12,6 +12,7 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.chat.Component;
 
@@ -21,12 +22,14 @@ import io.github.cottonmc.cotton.gui.impl.client.WidgetTextures;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.icon.Icon;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 public class WButton extends WWidget {
 	private static final int ICON_SPACING = 2;
 
-	@Nullable private Component label;
+	private @Nullable Component label;
 	protected int color = WLabel.DEFAULT_TEXT_COLOR;
 	/**
 	 * The size (width/height) of this button's icon in pixels.
@@ -36,8 +39,8 @@ public class WButton extends WWidget {
 	private boolean enabled = true;
 	protected HorizontalAlignment alignment = HorizontalAlignment.CENTER;
 	
-	@Nullable private Runnable onClick;
-	@Nullable private Icon icon = null;
+	private @Nullable Runnable onClick;
+	private @Nullable Icon icon = null;
 
 	/**
 	 * Constructs a button with no label and no icon.
@@ -143,8 +146,7 @@ public class WButton extends WWidget {
 	 * @return the click handler
 	 * @since 2.2.0
 	 */
-	@Nullable
-	public Runnable getOnClick() {
+	public @Nullable Runnable getOnClick() {
 		return onClick;
 	}
 
@@ -214,8 +216,7 @@ public class WButton extends WWidget {
 	 * @return the icon
 	 * @since 2.2.0
 	 */
-	@Nullable
-	public Icon getIcon() {
+	public @Nullable Icon getIcon() {
 		return icon;
 	}
 
@@ -234,7 +235,8 @@ public class WButton extends WWidget {
 	@Environment(EnvType.CLIENT)
 	@Override
 	public void addNarrations(NarrationElementOutput builder) {
-		builder.add(NarratedElementType.TITLE, AbstractWidget.wrapDefaultNarrationMessage(getLabel()));
+		Component label = Objects.requireNonNullElse(getLabel(), CommonComponents.EMPTY);
+		builder.add(NarratedElementType.TITLE, AbstractWidget.wrapDefaultNarrationMessage(label));
 
 		if (isEnabled()) {
 			if (isFocused()) {

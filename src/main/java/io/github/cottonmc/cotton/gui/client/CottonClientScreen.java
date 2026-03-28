@@ -21,10 +21,9 @@ import io.github.cottonmc.cotton.gui.impl.mixin.client.ScreenAccessor;
 import io.github.cottonmc.cotton.gui.widget.WPanel;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class CottonClientScreen extends Screen implements CottonScreenImpl {
-	private static final VisualLogger LOGGER = new VisualLogger(CottonInventoryScreen.class);
 	protected final GuiDescription description;
 	protected int left = 0;
 	protected int top = 0;
@@ -45,8 +44,7 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 	 */
 	protected int titleY;
 
-	@Nullable
-	protected WWidget lastResponder = null;
+	protected @Nullable WWidget lastResponder = null;
 
 	private final MouseInputHandler<CottonClientScreen> mouseInputHandler = new MouseInputHandler<>(this);
 
@@ -78,17 +76,13 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 		super.init();
 
 		WPanel root = description.getRootPanel();
-		if (root != null) root.addPainters();
+		root.addPainters();
 		description.addPainters();
 		reposition(width, height);
 
-		if (root != null) {
-			GuiEventListener rootPanelElement = FocusElements.ofPanel(root);
-			((ScreenAccessor) this).libgui$getChildren().add(rootPanelElement);
-			setInitialFocus(rootPanelElement);
-		} else {
-			LOGGER.warn("No root panel found, keyboard navigation disabled");
-		}
+		GuiEventListener rootPanelElement = FocusElements.ofPanel(root);
+		((ScreenAccessor) this).libgui$getChildren().add(rootPanelElement);
+		setInitialFocus(rootPanelElement);
 	}
 
 	@Override
@@ -97,9 +91,8 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 		VisualLogger.reset();
 	}
 
-	@Nullable
 	@Override
-	public WWidget getLastResponder() {
+	public @Nullable WWidget getLastResponder() {
 		return lastResponder;
 	}
 
@@ -116,29 +109,25 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 	 */
 	protected void reposition(int screenWidth, int screenHeight) {
 		WPanel root = description.getRootPanel();
-		if (root != null) {
-			titleX = description.getTitlePos().x();
-			titleY = description.getTitlePos().y();
+		titleX = description.getTitlePos().x();
+		titleY = description.getTitlePos().y();
 
-			if (!description.isFullscreen()) {
-				this.left = (screenWidth - root.getWidth()) / 2;
-				this.top = (screenHeight - root.getHeight()) / 2;
-			} else {
-				this.left = 0;
-				this.top = 0;
+		if (!description.isFullscreen()) {
+			this.left = (screenWidth - root.getWidth()) / 2;
+			this.top = (screenHeight - root.getHeight()) / 2;
+		} else {
+			this.left = 0;
+			this.top = 0;
 
-				root.setSize(screenWidth, screenHeight);
-			}
+			root.setSize(screenWidth, screenHeight);
 		}
 	}
 
 	private void paint(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
 		WPanel root = description.getRootPanel();
-		if (root!=null) {
-			root.paint(context, left, top, mouseX-left, mouseY-top);
-		}
+		root.paint(context, left, top, mouseX-left, mouseY-top);
 
-		if (getTitle() != null && description.isTitleVisible()) {
+		if (description.isTitleVisible()) {
 			int width = description.getRootPanel().getWidth();
 			ScreenDrawing.drawString(context, getTitle().getVisualOrderText(), description.getTitleAlignment(), left + titleX, top + titleY, width - 2 * titleX, description.getTitleColor());
 		}
@@ -150,10 +139,8 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 		paint(graphics, mouseX, mouseY, a);
 		
 		WPanel root = description.getRootPanel();
-		if (root!=null) {
-			WWidget hitChild = root.hit(mouseX-left, mouseY-top);
-			if (hitChild!=null) hitChild.renderTooltip(graphics, left, top, mouseX-left, mouseY-top);
-		}
+		WWidget hitChild = root.hit(mouseX-left, mouseY-top);
+		if (hitChild!=null) hitChild.renderTooltip(graphics, left, top, mouseX-left, mouseY-top);
 
 		VisualLogger.render(graphics);
 	}
@@ -161,12 +148,8 @@ public class CottonClientScreen extends Screen implements CottonScreenImpl {
 	@Override
 	public void tick() {
 		super.tick();
-		if (description!=null) {
-			WPanel root = description.getRootPanel();
-			if (root!=null) {
-				root.tick();
-			}
-		}
+		WPanel root = description.getRootPanel();
+		root.tick();
 	}
 
 	@Override

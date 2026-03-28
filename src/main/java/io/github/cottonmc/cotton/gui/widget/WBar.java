@@ -11,7 +11,9 @@ import net.minecraft.util.Mth;
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.widget.data.Texture;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * A bar that displays int values from a {@link ContainerData}.
@@ -24,15 +26,13 @@ public class WBar extends WWidget {
 	 * The background texture. If not null, it will be
 	 * drawn behind the bar contents.
 	 */
-	@Nullable
-	protected final Texture bg;
+	protected final @Nullable Texture bg;
 
 	/**
 	 * The bar texture. If not null, it will be
 	 * drawn to represent the current field.
 	 */
-	@Nullable
-	protected final Texture bar;
+	protected final @Nullable Texture bar;
 
 	/**
 	 * The ID of the displayed property in the {@link #properties}.
@@ -61,7 +61,7 @@ public class WBar extends WWidget {
 	 * <p>The current value is read from the property with ID {@link #field},
 	 * and the maximum value is usually read from the property with ID {@link #max}.
 	 */
-	protected ContainerData properties;
+	protected @Nullable ContainerData properties;
 	private boolean manuallySetProperties = false;
 
 	/**
@@ -75,13 +75,13 @@ public class WBar extends WWidget {
 	 *
 	 * @see #withTooltip(String) formatting instructions
 	 */
-	protected String tooltipLabel;
+	protected @Nullable String tooltipLabel;
 
 	/**
 	 * A tooltip text component. This can be used instead of {@link #tooltipLabel},
 	 * or together with it. In that case, this component will be drawn after the other label.
 	 */
-	protected Component tooltipTextComponent;
+	protected @Nullable Component tooltipTextComponent;
 
 	public WBar(@Nullable Texture bg, @Nullable Texture bar, int field, int maxField) {
 		this(bg, bar, field, maxField, Direction.UP);
@@ -144,6 +144,7 @@ public class WBar extends WWidget {
 			ScreenDrawing.coloredRect(context, x, y, getWidth(), getHeight(), ScreenDrawing.colorAtOpacity(0x000000, 0.25f));
 		}
 
+		Objects.requireNonNull(properties);
 		int maxVal = max >= 0 ? properties.get(max) : maxValue;
 		float percent = properties.get(field) / (float) maxVal;
 		if (percent < 0) percent = 0f;
@@ -205,6 +206,7 @@ public class WBar extends WWidget {
 	@Override
 	public void addTooltip(TooltipBuilder information) {
 		if (tooltipLabel != null) {
+			Objects.requireNonNull(properties);
 			int value = (field >= 0) ? properties.get(field) : 0;
 			int valMax = (max >= 0) ? properties.get(max) : maxValue;
 			information.add(Component.translatable(tooltipLabel, value, valMax));
@@ -229,8 +231,7 @@ public class WBar extends WWidget {
 	 *
 	 * @return the current property delegate, or null if not initialized yet
 	 */
-	@Nullable
-	public ContainerData getProperties() {
+	public @Nullable ContainerData getProperties() {
 		return properties;
 	}
 
@@ -243,7 +244,7 @@ public class WBar extends WWidget {
 	 * @param properties the properties
 	 * @return this bar
 	 */
-	public WBar setProperties(ContainerData properties) {
+	public WBar setProperties(@Nullable ContainerData properties) {
 		this.properties = properties;
 		manuallySetProperties = properties != null;
 		return this;

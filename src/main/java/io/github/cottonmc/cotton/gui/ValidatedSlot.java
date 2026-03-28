@@ -31,7 +31,7 @@ public class ValidatedSlot extends Slot {
 
 	public ValidatedSlot(Container inventory, int index, int x, int y) {
 		super(inventory, index, x, y);
-		if (inventory==null) throw new IllegalArgumentException("Can't make an itemslot from a null inventory!");
+		Objects.requireNonNull(inventory, "Can't make an itemslot from a null inventory!");
 		this.slotNumber = index;
 	}
 	
@@ -47,11 +47,6 @@ public class ValidatedSlot extends Slot {
 	
 	@Override
 	public ItemStack getItem() {
-		if (container ==null) {
-			LOGGER.warn("Prevented null-inventory from WItemSlot with slot #: {}", slotNumber);
-			return ItemStack.EMPTY;
-		}
-		
 		ItemStack result = super.getItem();
 		if (result==null) {
 			LOGGER.warn("Prevented null-itemstack crash from: {}", container.getClass().getCanonicalName());

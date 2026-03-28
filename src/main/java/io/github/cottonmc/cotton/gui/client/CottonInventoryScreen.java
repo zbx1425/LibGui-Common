@@ -30,7 +30,7 @@ import io.github.cottonmc.cotton.gui.widget.WPanel;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A screen for a {@link SyncedGuiDescription}.
@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 public class CottonInventoryScreen<T extends SyncedGuiDescription> extends AbstractContainerScreen<T> implements CottonScreenImpl {
 	private static final VisualLogger LOGGER = new VisualLogger(CottonInventoryScreen.class);
 	protected final SyncedGuiDescription description;
-	@Nullable protected WWidget lastResponder = null;
+	protected @Nullable WWidget lastResponder = null;
 	private final MouseInputHandler<CottonInventoryScreen<T>> mouseInputHandler = new MouseInputHandler<>(this);
 
 	/**
@@ -116,18 +116,14 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 		super.init();
 
 		WPanel root = description.getRootPanel();
-		if (root != null) root.addPainters();
+		root.addPainters();
 		description.addPainters();
 		
 		reposition(width, height);
 
-		if (root != null) {
-			GuiEventListener rootPanelElement = FocusElements.ofPanel(root);
-			((ScreenAccessor) this).libgui$getChildren().add(rootPanelElement);
-			setInitialFocus(rootPanelElement);
-		} else {
-			LOGGER.warn("No root panel found, keyboard navigation disabled");
-		}
+		GuiEventListener rootPanelElement = FocusElements.ofPanel(root);
+		((ScreenAccessor) this).libgui$getChildren().add(rootPanelElement);
+		setInitialFocus(rootPanelElement);
 	}
 
 	@Override
@@ -142,9 +138,8 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 		return description;
 	}
 
-	@Nullable
 	@Override
-	public WWidget getLastResponder() {
+	public @Nullable WWidget getLastResponder() {
 		return lastResponder;
 	}
 
@@ -168,13 +163,11 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 	 */
 	protected void reposition(int screenWidth, int screenHeight) {
 		WPanel basePanel = description.getRootPanel();
-		if (basePanel!=null) {
-			clearPeers();
-			basePanel.validate(description);
+		clearPeers();
+		basePanel.validate(description);
 
-			((AbstractContainerScreenAccessor) this).setImageWidth(basePanel.getWidth());
-			((AbstractContainerScreenAccessor) this).setImageHeight(basePanel.getHeight());
-		}
+		((AbstractContainerScreenAccessor) this).setImageWidth(basePanel.getWidth());
+		((AbstractContainerScreenAccessor) this).setImageHeight(basePanel.getHeight());
 
 		titleLabelX = description.getTitlePos().x();
 		titleLabelY = description.getTitlePos().y();
@@ -186,9 +179,7 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 			leftPos = 0;
 			topPos = 0;
 
-			if (basePanel != null) {
-				basePanel.setSize(screenWidth, screenHeight);
-			}
+			basePanel.setSize(screenWidth, screenHeight);
 		}
 	}
 	
@@ -304,9 +295,7 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 	 */
 	public void paintDescription(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
 		WPanel root = description.getRootPanel();
-		if (root!=null) {
-			root.paint(context, leftPos, topPos, mouseX- leftPos, mouseY- topPos);
-		}
+		root.paint(context, leftPos, topPos, mouseX- leftPos, mouseY- topPos);
 	}
 
 	@Override
@@ -319,10 +308,8 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 	protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
 		super.extractTooltip(graphics, mouseX, mouseY);
 		WPanel root = description.getRootPanel();
-		if (root!=null) {
-			WWidget hitChild = root.hit(mouseX- leftPos, mouseY- topPos);
-			if (hitChild!=null) hitChild.renderTooltip(graphics, leftPos, topPos, mouseX- leftPos, mouseY- topPos);
-		}
+		WWidget hitChild = root.hit(mouseX- leftPos, mouseY- topPos);
+		if (hitChild!=null) hitChild.renderTooltip(graphics, leftPos, topPos, mouseX- leftPos, mouseY- topPos);
 	}
 
 	@Override
@@ -339,9 +326,7 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Abstr
 	protected void containerTick() {
 		super.containerTick();
 		WPanel root = description.getRootPanel();
-		if (root!=null) {
-			root.tick();
-		}
+		root.tick();
 
 		description.sendDataSlotUpdates();
 	}

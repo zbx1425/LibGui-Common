@@ -6,7 +6,7 @@ import net.minecraft.client.gui.screens.Screen;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.ObservableProperty;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -104,8 +104,7 @@ public final class MouseInputHandler<S extends Screen & CottonScreenImpl> {
 				widget -> widget.onMouseMove(containerX - widget.getAbsoluteX(), containerY - widget.getAbsoluteY())
 		);
 
-		@Nullable
-		WWidget hoveredWidget = runTree(
+		@Nullable WWidget hoveredWidget = runTree(
 				hit,
 				widget -> InputResult.of(widget.canHover() && widget.isWithinBounds(containerX - widget.getAbsoluteX(), containerY - widget.getAbsoluteY()))
 		);
@@ -119,8 +118,7 @@ public final class MouseInputHandler<S extends Screen & CottonScreenImpl> {
 	 * @param function the function to run
 	 * @return the first widget to return {@link InputResult#PROCESSED}, or null if none found.
 	 */
-	@Nullable
-	private static WWidget runTree(WWidget bottom, Function<WWidget, InputResult> function) {
+	private static @Nullable WWidget runTree(WWidget bottom, Function<WWidget, InputResult> function) {
 		WWidget current = bottom;
 
 		while (current != null) {

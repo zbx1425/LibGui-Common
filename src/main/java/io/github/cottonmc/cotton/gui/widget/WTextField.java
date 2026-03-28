@@ -20,7 +20,7 @@ import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.impl.client.NarrationMessages;
 import io.github.cottonmc.cotton.gui.impl.mixin.client.EditBoxAccessor;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
@@ -33,8 +33,7 @@ public class WTextField extends WWidget {
 	public static final int CURSOR_HEIGHT = 12;
 
 	@Environment(EnvType.CLIENT)
-	@Nullable
-	private Font textRenderer;
+	private @Nullable Font textRenderer;
 
 	@Environment(EnvType.CLIENT)
 	private @Nullable IMEPreeditOverlay preeditOverlay;
@@ -50,8 +49,7 @@ public class WTextField extends WWidget {
 
 	private static final int CURSOR_COLOR = 0xFFD0D0D0;
 
-	@Nullable
-	private Component suggestion = null;
+	private @Nullable Component suggestion = null;
 
 	// Index of the leftmost character to be rendered.
 	private int scrollOffset = 0;
@@ -64,10 +62,8 @@ public class WTextField extends WWidget {
 	 * anchor at the same place and start expanding the selection rightwards instead.
 	 */
 	private int select = -1;
-
-	private Consumer<String> onChanged;
-
-	private Predicate<String> textPredicate;
+	private @Nullable Consumer<String> onChanged;
+	private @Nullable Predicate<String> textPredicate;
 
 	public WTextField() {
 	}
@@ -165,8 +161,7 @@ public class WTextField extends WWidget {
 		scrollOffset = Math.min(rightMostScrollOffset, scrollOffset);
 	}
 
-	@Nullable
-	public String getSelection() {
+	public @Nullable String getSelection() {
 		if (select < 0) return null;
 		if (select == cursor) return null;
 
@@ -304,8 +299,7 @@ public class WTextField extends WWidget {
 		return this;
 	}
 
-	@Nullable
-	public Component getSuggestion() {
+	public @Nullable Component getSuggestion() {
 		return suggestion;
 	}
 

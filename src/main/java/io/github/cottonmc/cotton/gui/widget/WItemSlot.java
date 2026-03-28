@@ -26,7 +26,7 @@ import io.github.cottonmc.cotton.gui.widget.data.Rect2i;
 import io.github.cottonmc.cotton.gui.widget.focus.Focus;
 import io.github.cottonmc.cotton.gui.widget.focus.FocusModel;
 import io.github.cottonmc.cotton.gui.widget.icon.Icon;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.ArrayList;
@@ -86,11 +86,9 @@ public class WItemSlot extends WWidget {
 
 	private static final VisualLogger LOGGER = new VisualLogger(WItemSlot.class);
 	private final List<ValidatedSlot> peers = new ArrayList<>();
-	@Nullable
 	@Environment(EnvType.CLIENT)
-	private BackgroundPainter backgroundPainter;
-	@Nullable
-	private Icon icon = null;
+	private @Nullable BackgroundPainter backgroundPainter;
+	private @Nullable Icon icon = null;
 	private boolean iconOnlyPaintedForEmptySlots = false;
 	private Container inventory;
 	private int startIndex = 0;
@@ -268,8 +266,7 @@ public class WItemSlot extends WWidget {
 	 *
 	 * @since 4.1.0
 	 */
-	@Nullable
-	public Icon getIcon() {
+	public @Nullable Icon getIcon() {
 		return this.icon;
 	}
 
@@ -473,9 +470,8 @@ public class WItemSlot extends WWidget {
 	 * @return the background painter
 	 * @since 2.0.0
 	 */
-	@Nullable
 	@Environment(EnvType.CLIENT)
-	public BackgroundPainter getBackgroundPainter() {
+	public @Nullable BackgroundPainter getBackgroundPainter() {
 		return backgroundPainter;
 	}
 
@@ -551,9 +547,8 @@ public class WItemSlot extends WWidget {
 		}
 	}
 
-	@Nullable
 	@Override
-	public FocusModel<?> getFocusModel() {
+	public @Nullable FocusModel<?> getFocusModel() {
 		return focusModel;
 	}
 
@@ -632,8 +627,7 @@ public class WItemSlot extends WWidget {
 	 * @return the narration name, or null if there's none for this slot
 	 * @since 4.2.0
 	 */
-	@Nullable
-	protected Component getNarrationName() {
+	protected @Nullable Component getNarrationName() {
 		return null;
 	}
 

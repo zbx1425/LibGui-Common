@@ -11,7 +11,7 @@ import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,8 @@ import java.util.Objects;
  */
 public class LightweightGuiDescription implements GuiDescription {
 	protected WPanel rootPanel = new WGridPanel().setInsets(Insets.ROOT_PANEL);
-	protected ContainerData propertyDelegate;
-	protected WWidget focus;
+	protected @Nullable ContainerData propertyDelegate;
+	protected @Nullable WWidget focus;
 
 	protected int titleColor = WLabel.DEFAULT_TEXT_COLOR;
 	protected int darkmodeTitleColor = WLabel.DEFAULT_DARKMODE_TEXT_COLOR;
@@ -66,7 +66,7 @@ public class LightweightGuiDescription implements GuiDescription {
 
 	@Override
 	public void addPainters() {
-		if (this.rootPanel!=null && !fullscreen && getUseDefaultRootBackground()) {
+		if (!fullscreen && getUseDefaultRootBackground()) {
 			this.rootPanel.setBackgroundPainter(BackgroundPainter.VANILLA);
 		}
 	}
@@ -87,8 +87,7 @@ public class LightweightGuiDescription implements GuiDescription {
 	}
 
 	@Override
-	@Nullable
-	public ContainerData getContainerData() {
+	public @Nullable ContainerData getContainerData() {
 		return propertyDelegate;
 	}
 
@@ -104,7 +103,7 @@ public class LightweightGuiDescription implements GuiDescription {
 	}
 
 	@Override
-	public WWidget getFocus() {
+	public @Nullable WWidget getFocus() {
 		return focus;
 	}
 

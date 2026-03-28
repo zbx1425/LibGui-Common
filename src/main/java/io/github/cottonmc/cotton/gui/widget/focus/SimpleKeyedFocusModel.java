@@ -2,7 +2,7 @@ package io.github.cottonmc.cotton.gui.widget.focus;
 
 import io.github.cottonmc.cotton.gui.widget.data.Rect2i;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * @param <K> the focus key type
  * @since 7.0.0
  */
-public final class SimpleKeyedFocusModel<K> implements FocusModel<K> {
+public final class SimpleKeyedFocusModel<K extends @Nullable Object> implements FocusModel<K> {
 	private final List<Focus<K>> foci;
 	private @Nullable K focused;
 

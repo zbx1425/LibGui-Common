@@ -9,6 +9,7 @@ import io.github.cottonmc.cotton.gui.impl.Proxy;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ import java.util.function.Supplier;
  *     D's *must* have working equals and hashCode methods to distinguish them from each other!
  * <p> W is the WWidget class that will represent a single D of data.
  */
-public class WListPanel<D, W extends WWidget> extends WClippedPanel {
+public class WListPanel<D extends @Nullable Object, W extends WWidget> extends WClippedPanel {
 	/**
 	 * The list of data that this list represents.
 	 */

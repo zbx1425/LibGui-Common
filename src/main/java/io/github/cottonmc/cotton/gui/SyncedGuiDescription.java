@@ -42,7 +42,7 @@ import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ import java.util.function.Supplier;
  */
 public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDescription {
 	
-	protected Container blockInventory;
+	protected @Nullable Container blockInventory;
 	protected Inventory playerInventory;
 
 	/**
@@ -67,7 +67,7 @@ public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDe
 	 * @deprecated Use the methods {@link #getContainerData()} and {@link #setContainerData(ContainerData)} instead.
 	 */
 	@Deprecated(forRemoval = true)
-	protected ContainerData propertyDelegate;
+	protected @Nullable ContainerData propertyDelegate;
 	
 	protected WPanel rootPanel = new WGridPanel().setInsets(Insets.ROOT_PANEL);
 	protected int titleColor = WLabel.DEFAULT_TEXT_COLOR;
@@ -76,7 +76,7 @@ public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDe
 	protected boolean titleVisible = true;
 	protected HorizontalAlignment titleAlignment = HorizontalAlignment.LEFT;
 
-	protected WWidget focus;
+	protected @Nullable WWidget focus;
 	private Vec2i titlePos = new Vec2i(8, 6);
 	private boolean useDefaultRootBackground = true;
 	private final List<FocusChangeListener> focusChangeListeners = new ArrayList<>();
@@ -152,7 +152,7 @@ public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDe
 	
 	@Environment(EnvType.CLIENT)
 	public void addPainters() {
-		if (this.rootPanel!=null && !fullscreen && getUseDefaultRootBackground()) {
+		if (!fullscreen && getUseDefaultRootBackground()) {
 			this.rootPanel.setBackgroundPainter(BackgroundPainter.VANILLA);
 		}
 	}
@@ -343,9 +343,8 @@ public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDe
 		return inserted;
 	}
 
-	@Nullable
 	@Override
-	public ContainerData getContainerData() {
+	public @Nullable ContainerData getContainerData() {
 		return propertyDelegate;
 	}
 	
@@ -442,10 +441,7 @@ public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDe
 			BlockEntity be = world.getBlockEntity(pos);
 			if (be!=null) {
 				if (be instanceof WorldlyContainerHolder inventoryProvider) {
-					Container inventory = inventoryProvider.getContainer(state, world, pos);
-					if (inventory != null) {
-						return inventory;
-					}
+					return inventoryProvider.getContainer(state, world, pos);
 				} else if (be instanceof Container inventory) {
 					return inventory;
 				}
@@ -525,7 +521,7 @@ public class SyncedGuiDescription extends AbstractContainerMenu implements GuiDe
 	}
 
 	@Override
-	public WWidget getFocus() {
+	public @Nullable WWidget getFocus() {
 		return focus;
 	}
 

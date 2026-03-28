@@ -1,6 +1,6 @@
 package io.github.cottonmc.cotton.gui.widget.data;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -11,7 +11,7 @@ import java.util.function.Supplier;
  * @param <T> the contained value type
  * @since 4.2.0
  */
-public interface ObservableView<T> extends Supplier<T> {
+public interface ObservableView<T extends @Nullable Object> extends Supplier<T> {
 	/**
 	 * {@return whether this property has been set to a value}
 	 */
@@ -59,7 +59,7 @@ public interface ObservableView<T> extends Supplier<T> {
 	 * @param <T> the value type listened to
 	 */
 	@FunctionalInterface
-	interface ChangeListener<T> {
+	interface ChangeListener<T extends @Nullable Object> {
 		/**
 		 * Handles a change in an observable property.
 		 *

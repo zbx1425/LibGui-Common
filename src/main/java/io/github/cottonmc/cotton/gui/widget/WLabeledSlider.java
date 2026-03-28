@@ -15,7 +15,7 @@ import io.github.cottonmc.cotton.gui.impl.client.WidgetTextures;
 import io.github.cottonmc.cotton.gui.impl.mixin.client.AbstractSliderButtonAccessor;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A vanilla-style labeled slider widget.
@@ -27,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
  * @see WAbstractSlider for more information about listeners
  */
 public class WLabeledSlider extends WAbstractSlider {
-	@Nullable private Component label = null;
-	@Nullable private LabelUpdater labelUpdater = null;
+	private @Nullable Component label = null;
+	private @Nullable LabelUpdater labelUpdater = null;
 	private HorizontalAlignment labelAlignment = HorizontalAlignment.CENTER;
 
 	/**
@@ -82,8 +82,7 @@ public class WLabeledSlider extends WAbstractSlider {
 	 *
 	 * @return the label
 	 */
-	@Nullable
-	public Component getLabel() {
+	public @Nullable Component getLabel() {
 		return label;
 	}
 
@@ -127,8 +126,7 @@ public class WLabeledSlider extends WAbstractSlider {
 	 *
 	 * @return the label updater
 	 */
-	@Nullable
-	public LabelUpdater getLabelUpdater() {
+	public @Nullable LabelUpdater getLabelUpdater() {
 		return labelUpdater;
 	}
 

@@ -177,6 +177,8 @@ public class ScreenNetworkingImpl implements ScreenNetworking {
 
 	public static final class DummyNetworking extends ScreenNetworkingImpl {
 		public DummyNetworking() {
+			// Skip the IDEA inspection on these nulls. They're guaranteed to be fine.
+			// noinspection DataFlowIssue
 			super(null, null);
 		}
 

@@ -2,6 +2,7 @@ package io.github.cottonmc.cotton.gui.widget.focus;
 
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.Rect2i;
+import org.jspecify.annotations.Nullable;
 
 import java.util.stream.Stream;
 
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
  * @see #simple(WWidget) FocusModel.simple()
  * @see SimpleKeyedFocusModel
  */
-public interface FocusModel<K> {
+public interface FocusModel<K extends @Nullable Object> {
 	/**
 	 * Checks if a focus is focused in the target widget.
 	 * If the target widget is not focused itself, none of its foci should have focus.

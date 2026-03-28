@@ -11,7 +11,7 @@ import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.Rect2i;
 import io.github.cottonmc.cotton.gui.widget.focus.Focus;
 import io.github.cottonmc.cotton.gui.widget.focus.FocusModel;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +49,8 @@ public final class FocusElements {
 		public void setFocused(boolean focused) {
 			if (focused) {
 				Focus<?> focus = focus();
-
-				if (focus != null) {
-					widget.requestFocus();
-					((FocusModel<Object>) widget.getFocusModel()).setFocused((Focus<Object>) focus);
-				}
+				widget.requestFocus();
+				((FocusModel<Object>) widget.getFocusModel()).setFocused((Focus<Object>) focus);
 			} else {
 				widget.releaseFocus();
 			}
@@ -91,7 +88,7 @@ public final class FocusElements {
 	private static final class PanelFocusElement extends AbstractContainerEventHandler implements FocusElement<WPanel> {
 		private final List<FocusElement<?>> children = new ArrayList<>();
 		private final WPanel widget;
-		private List<WWidget> childWidgets;
+		private @Nullable List<WWidget> childWidgets;
 
 		private PanelFocusElement(WPanel widget) {
 			this.widget = widget;

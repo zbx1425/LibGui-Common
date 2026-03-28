@@ -20,7 +20,7 @@ import io.github.cottonmc.cotton.gui.impl.mixin.client.ScreenAccessor;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,7 +38,7 @@ public class WText extends WWidget {
 	protected HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
 	protected VerticalAlignment verticalAlignment = VerticalAlignment.TOP;
 	@Environment(EnvType.CLIENT)
-	private List<FormattedCharSequence> wrappedLines;
+	private @Nullable List<FormattedCharSequence> wrappedLines;
 	private boolean wrappingScheduled = false;
 
 	public WText(Component text) {
@@ -76,8 +76,7 @@ public class WText extends WWidget {
 	 * @return the text style at the position, or null if not found
 	 */
 	@Environment(EnvType.CLIENT)
-	@Nullable
-	public Style getTextStyleAt(int x, int y) {
+	public @Nullable Style getTextStyleAt(int x, int y) {
 		Font font = Minecraft.getInstance().font;
 		int yOffset = TextAlignment.getTextOffsetY(verticalAlignment, height, wrappedLines.size());
 		int lineIndex = (y - yOffset) / font.lineHeight;

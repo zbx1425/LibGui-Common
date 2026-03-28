@@ -1,6 +1,6 @@
 package io.github.cottonmc.cotton.gui.widget.data;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.Objects;
  * @since 4.2.0
  */
 // TODO: Add filters
-public final class ObservableProperty<T> implements ObservableView<T> {
+public final class ObservableProperty<T extends @Nullable Object> implements ObservableView<T> {
 	private static final String DEFAULT_NAME = "<unnamed>";
 	private boolean hasValue;
 	private T value;
@@ -44,7 +44,7 @@ public final class ObservableProperty<T> implements ObservableView<T> {
 	 * @param <T> the contained value type
 	 * @return the created empty property builder
 	 */
-	public static <T> Builder<T> empty() {
+	public static <T extends @Nullable Object> Builder<T> empty() {
 		return new Builder<>(null, false);
 	}
 
@@ -55,7 +55,7 @@ public final class ObservableProperty<T> implements ObservableView<T> {
 	 * @param <T> the contained value type
 	 * @return the created property
 	 */
-	public static <T> Builder<T> of(T initialValue) {
+	public static <T extends @Nullable Object> Builder<T> of(T initialValue) {
 		return new Builder<>(initialValue, true);
 	}
 
@@ -148,7 +148,7 @@ public final class ObservableProperty<T> implements ObservableView<T> {
 	 *
 	 * @param <T> the contained value type
 	 */
-	public static final class Builder<T> {
+	public static final class Builder<T extends @Nullable Object> {
 		private final T initialValue;
 		private final boolean hasValue;
 		private String name = DEFAULT_NAME;

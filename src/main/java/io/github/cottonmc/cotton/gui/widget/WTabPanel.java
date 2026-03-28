@@ -22,7 +22,7 @@ import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.icon.Icon;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -177,13 +177,10 @@ public class WTabPanel extends WPanel {
 	 * The data of a tab.
 	 */
 	public static class Tab {
-		@Nullable
-		private final Component title;
-		@Nullable
-		private final Icon icon;
+		private final @Nullable Component title;
+		private final @Nullable Icon icon;
 		private final WWidget widget;
-		@Nullable
-		private final Consumer<TooltipBuilder> tooltip;
+		private final @Nullable Consumer<TooltipBuilder> tooltip;
 
 		private Tab(@Nullable Component title, @Nullable Icon icon, WWidget widget, @Nullable Consumer<TooltipBuilder> tooltip) {
 			if (title == null && icon == null) {
@@ -201,8 +198,7 @@ public class WTabPanel extends WPanel {
 		 *
 		 * @return the title, or null if there's no title
 		 */
-		@Nullable
-		public Component getTitle() {
+		public @Nullable Component getTitle() {
 			return title;
 		}
 
@@ -211,8 +207,7 @@ public class WTabPanel extends WPanel {
 		 *
 		 * @return the icon, or null if there's no title
 		 */
-		@Nullable
-		public Icon getIcon() {
+		public @Nullable Icon getIcon() {
 			return icon;
 		}
 
@@ -241,10 +236,8 @@ public class WTabPanel extends WPanel {
 		 * A builder for tab data.
 		 */
 		public static final class Builder {
-			@Nullable
-			private Component title;
-			@Nullable
-			private Icon icon;
+			private @Nullable Component title;
+			private @Nullable Icon icon;
 			private final WWidget widget;
 			private final List<Component> tooltip = new ArrayList<>();
 
@@ -318,8 +311,7 @@ public class WTabPanel extends WPanel {
 				Consumer<TooltipBuilder> tooltip = null;
 
 				if (!this.tooltip.isEmpty()) {
-					//noinspection Convert2Lambda
-					tooltip = new Consumer<TooltipBuilder>() {
+					tooltip = new Consumer<>() {
 						@Environment(EnvType.CLIENT)
 						@Override
 						public void accept(TooltipBuilder builder) {

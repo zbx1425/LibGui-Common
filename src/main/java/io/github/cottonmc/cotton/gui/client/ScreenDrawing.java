@@ -10,7 +10,7 @@ import net.minecraft.resources.Identifier;
 import io.github.cottonmc.cotton.gui.impl.mixin.client.GuiGraphicsExtractorAccessor;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Texture;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.joml.Matrix3x2fStack;
 
 /**

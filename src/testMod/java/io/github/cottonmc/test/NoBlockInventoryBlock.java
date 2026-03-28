@@ -1,7 +1,6 @@
 package io.github.cottonmc.test;
 
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,7 +12,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class NoBlockInventoryBlock extends Block implements MenuProvider {
 	public NoBlockInventoryBlock(Properties settings) {
@@ -31,9 +30,8 @@ public class NoBlockInventoryBlock extends Block implements MenuProvider {
 		return getName();
 	}
 
-	@Nullable
 	@Override
-	public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+	public @Nullable AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
 		return new ReallySimpleDescription(syncId, inv);
 	}
 }

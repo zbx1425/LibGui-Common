@@ -20,7 +20,7 @@ import io.github.cottonmc.cotton.gui.impl.mixin.client.ScreenAccessor;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A single-line label widget.
@@ -104,8 +104,7 @@ public class WLabel extends WWidget {
 	 * @return the text style at the position, or null if not found
 	 */
 	@Environment(EnvType.CLIENT)
-	@Nullable
-	public Style getTextStyleAt(int x, int y) {
+	public @Nullable Style getTextStyleAt(int x, int y) {
 		if (isWithinBounds(x, y)) {
 			int offsetX = TextAlignment.getTextOffsetX(horizontalAlignment, width, text.getVisualOrderText());
 			int offsetY = TextAlignment.getTextOffsetY(verticalAlignment, height, 1);

@@ -9,7 +9,7 @@ import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.impl.LibGuiCommon;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A simple slider widget that can be used to select int values.
@@ -23,8 +23,7 @@ public class WSlider extends WAbstractSlider {
 	public static final Identifier DARK_TEXTURE = LibGuiCommon.id("textures/widget/slider_dark.png");
 
 	@Environment(EnvType.CLIENT)
-	@Nullable
-	private BackgroundPainter backgroundPainter;
+	private @Nullable BackgroundPainter backgroundPainter;
 
 	public WSlider(int min, int max, Axis axis) {
 		super(min, max, axis);
@@ -95,8 +94,7 @@ public class WSlider extends WAbstractSlider {
 	}
 
 	@Environment(EnvType.CLIENT)
-	@Nullable
-	public BackgroundPainter getBackgroundPainter() {
+	public @Nullable BackgroundPainter getBackgroundPainter() {
 		return backgroundPainter;
 	}
 

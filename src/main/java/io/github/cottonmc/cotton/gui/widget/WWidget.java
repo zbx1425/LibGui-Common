@@ -17,7 +17,7 @@ import io.github.cottonmc.cotton.gui.impl.VisualLogger;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.data.ObservableProperty;
 import io.github.cottonmc.cotton.gui.widget.focus.FocusModel;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -32,8 +32,7 @@ public class WWidget {
 	 * The containing panel of this widget.
 	 * Can be null if this widget is the root panel or a HUD widget.
 	 */
-	@Nullable
-	protected WPanel parent;
+	protected @Nullable WPanel parent;
 
 	/** The X coordinate of this widget relative to its parent. */
 	protected int x = 0;
@@ -48,8 +47,7 @@ public class WWidget {
 	 * The containing {@link GuiDescription} of this widget.
 	 * Can be null if this widget is a {@linkplain io.github.cottonmc.cotton.gui.client.WidgetHudElement HUD} widget.
 	 */
-	@Nullable
-	protected GuiDescription host;
+	protected @Nullable GuiDescription host;
 
 	private final ObservableProperty<Boolean> hovered = ObservableProperty.of(false).nonnull().name("WWidget.hovered").build();
 
@@ -145,8 +143,7 @@ public class WWidget {
 	 * @return the parent, or null if this widget has no parent
 	 * @since 2.0.0
 	 */
-	@Nullable
-	public WPanel getParent() {
+	public @Nullable WPanel getParent() {
 		return parent;
 	}
 
@@ -411,8 +408,7 @@ public class WWidget {
 	 * @see #host
 	 * @since 2.1.0
 	 */
-	@Nullable
-	public final GuiDescription getHost() {
+	public final @Nullable GuiDescription getHost() {
 		return host;
 	}
 
@@ -423,7 +419,7 @@ public class WWidget {
 	 * @see #host
 	 * @since 2.1.0
 	 */
-	public void setHost(GuiDescription host) {
+	public void setHost(@Nullable GuiDescription host) {
 		if (host != null) {
 			this.host = host;
 		} else {

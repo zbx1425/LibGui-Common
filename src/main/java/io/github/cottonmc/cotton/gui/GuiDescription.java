@@ -9,7 +9,7 @@ import io.github.cottonmc.cotton.gui.widget.WPanel;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A GUI description represents a GUI without depending on screens.
@@ -91,8 +91,7 @@ public interface GuiDescription {
 	 * @deprecated Replaced with {@link #getContainerData()}.
 	 */
 	@Deprecated(forRemoval = true)
-	@Nullable
-	default ContainerData getPropertyDelegate() {
+	default @Nullable ContainerData getPropertyDelegate() {
 		return getContainerData();
 	}
 
@@ -101,22 +100,20 @@ public interface GuiDescription {
 	 *
 	 * @since 16.0.0
 	 */
-	@Nullable
-	ContainerData getContainerData();
+	@Nullable ContainerData getContainerData();
 
 	/**
 	 * Sets the object which manages the integer properties used by WBars.
 	 *
 	 * @since 16.0.0
 	 */
-	GuiDescription setContainerData(ContainerData data);
+	GuiDescription setContainerData(@Nullable ContainerData data);
 	
 	/** Tests whether the widget is the currently-focused one. */
 	public boolean isFocused(WWidget widget);
 	
 	/** Gets the currently-focused WWidget. May be null. */
-	@Nullable
-	public WWidget getFocus();
+	public @Nullable WWidget getFocus();
 	
 	/** Notifies this gui that the widget wants to acquire focus. */
 	public void requestFocus(WWidget widget);

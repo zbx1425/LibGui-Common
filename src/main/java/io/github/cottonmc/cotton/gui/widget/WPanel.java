@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
+import org.jspecify.annotations.Nullable;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public abstract class WPanel extends WWidget {
 	 */
 	protected final List<WWidget> children = new WidgetList(this, new ArrayList<>());
 	@Environment(EnvType.CLIENT)
-	private BackgroundPainter backgroundPainter;
+	private @Nullable BackgroundPainter backgroundPainter;
 
 	/**
 	 * Removes the widget from this panel.
@@ -48,7 +49,7 @@ public abstract class WPanel extends WWidget {
 	 * @return this panel
 	 */
 	@Environment(EnvType.CLIENT)
-	public WPanel setBackgroundPainter(BackgroundPainter painter) {
+	public WPanel setBackgroundPainter(@Nullable BackgroundPainter painter) {
 		this.backgroundPainter = painter;
 		return this;
 	}
@@ -59,7 +60,7 @@ public abstract class WPanel extends WWidget {
 	 * @return the painter
 	 */
 	@Environment(EnvType.CLIENT)
-	public BackgroundPainter getBackgroundPainter() {
+	public @Nullable BackgroundPainter getBackgroundPainter() {
 		return this.backgroundPainter;
 	}
 
@@ -214,7 +215,7 @@ public abstract class WPanel extends WWidget {
 			return backing.get(index);
 		}
 
-		private void checkWidget(WWidget widget) {
+		private void checkWidget(@Nullable WWidget widget) {
 			if (widget == null) {
 				throw new NullPointerException("Adding null widget to " + owner);
 			}

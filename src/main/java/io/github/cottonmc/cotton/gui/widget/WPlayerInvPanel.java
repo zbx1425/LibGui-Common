@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
 import io.github.cottonmc.cotton.gui.impl.client.NarrationMessages;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A player inventory widget that has a visually separate hotbar.
@@ -38,8 +38,7 @@ public class WPlayerInvPanel extends WPlainPanel {
 	 * @see #createInventoryLabel(Inventory)
 	 * @since 8.1.0
 	 */
-	@Nullable
-	protected final WWidget label;
+	protected final @Nullable WWidget label;
 
 	/**
 	 * Constructs a player inventory panel with a label.

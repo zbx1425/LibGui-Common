@@ -12,7 +12,7 @@ import net.minecraft.util.Mth;
 import io.github.cottonmc.cotton.gui.impl.client.NarrationMessages;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.IntConsumer;
@@ -74,8 +74,8 @@ public abstract class WAbstractSlider extends WWidget {
 	private int draggingFinishedFromScrollingTimer = 0;
 	private boolean pendingDraggingFinishedFromScrolling = false;
 
-	@Nullable private IntConsumer valueChangeListener = null;
-	@Nullable private IntConsumer draggingFinishedListener = null;
+	private @Nullable IntConsumer valueChangeListener = null;
+	private @Nullable IntConsumer draggingFinishedListener = null;
 
 	protected WAbstractSlider(int min, int max, Axis axis) {
 		if (max <= min) throw new IllegalArgumentException("Minimum value must be smaller than the maximum!");
@@ -242,8 +242,7 @@ public abstract class WAbstractSlider extends WWidget {
 		}
 	}
 
-	@Nullable
-	public IntConsumer getValueChangeListener() {
+	public @Nullable IntConsumer getValueChangeListener() {
 		return valueChangeListener;
 	}
 
@@ -251,8 +250,7 @@ public abstract class WAbstractSlider extends WWidget {
 		this.valueChangeListener = valueChangeListener;
 	}
 
-	@Nullable
-	public IntConsumer getDraggingFinishedListener() {
+	public @Nullable IntConsumer getDraggingFinishedListener() {
 		return draggingFinishedListener;
 	}
 
