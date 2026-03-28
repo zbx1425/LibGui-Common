@@ -490,6 +490,7 @@ public class WTextField extends WWidget {
 		return InputResult.PROCESSED;
 	}
 
+	@Environment(EnvType.CLIENT)
 	@Override
 	public InputResult onPreeditUpdated(@Nullable PreeditEvent event) {
 		preeditOverlay = event != null ? new IMEPreeditOverlay(event, getTextRenderer(), getTextRenderer().lineHeight + 1) : null;
