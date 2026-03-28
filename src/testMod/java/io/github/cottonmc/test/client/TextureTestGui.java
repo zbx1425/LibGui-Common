@@ -1,7 +1,7 @@
 package io.github.cottonmc.test.client;
 
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.impl.LibGuiCommon;
@@ -24,11 +24,11 @@ public class TextureTestGui extends LightweightGuiDescription {
 
 		var panelSprite = new Texture(LibGuiCommon.id("widget/panel_light"), Texture.Type.GUI_SPRITE);
 		var panelTexture = new Texture(LibGuiCommon.id("textures/gui/sprites/widget/panel_light.png"), Texture.Type.STANDALONE);
-		var simpleSprite = new Texture(Identifier.ofVanilla("icon/video_link"), Texture.Type.GUI_SPRITE);
+		var simpleSprite = new Texture(Identifier.withDefaultNamespace("icon/video_link"), Texture.Type.GUI_SPRITE);
 
-		root.add(createPanel(panelSprite), tab -> tab.icon(new TextureIcon(panelSprite)).tooltip(Text.literal("Nine-slice sprite")));
-		root.add(createPanel(simpleSprite), tab -> tab.icon(new TextureIcon(simpleSprite)).tooltip(Text.literal("Simple sprite")));
-		root.add(createPanel(panelTexture), tab -> tab.icon(new TextureIcon(panelTexture)).tooltip(Text.literal("Standalone")));
+		root.add(createPanel(panelSprite), tab -> tab.icon(new TextureIcon(panelSprite)).tooltip(Component.literal("Nine-slice sprite")));
+		root.add(createPanel(simpleSprite), tab -> tab.icon(new TextureIcon(simpleSprite)).tooltip(Component.literal("Simple sprite")));
+		root.add(createPanel(panelTexture), tab -> tab.icon(new TextureIcon(panelTexture)).tooltip(Component.literal("Standalone")));
 		setRootPanel(root);
 		setUseDefaultRootBackground(false);
 		root.validate(this);
@@ -37,10 +37,10 @@ public class TextureTestGui extends LightweightGuiDescription {
 	private WPanel createPanel(Texture texture) {
 		WSprite sprite = new WSprite(texture);
 
-		WLabeledSlider red = new WLabeledSlider(0, 255, Axis.HORIZONTAL, Text.literal("Red"));
-		WLabeledSlider green = new WLabeledSlider(0, 255, Axis.HORIZONTAL, Text.literal("Green"));
-		WLabeledSlider blue = new WLabeledSlider(0, 255, Axis.HORIZONTAL, Text.literal("Blue"));
-		WLabeledSlider alpha = new WLabeledSlider(0, 255, Axis.HORIZONTAL, Text.literal("Alpha"));
+		WLabeledSlider red = new WLabeledSlider(0, 255, Axis.HORIZONTAL, Component.literal("Red"));
+		WLabeledSlider green = new WLabeledSlider(0, 255, Axis.HORIZONTAL, Component.literal("Green"));
+		WLabeledSlider blue = new WLabeledSlider(0, 255, Axis.HORIZONTAL, Component.literal("Blue"));
+		WLabeledSlider alpha = new WLabeledSlider(0, 255, Axis.HORIZONTAL, Component.literal("Alpha"));
 
 		red.setValue(255);
 		green.setValue(255);

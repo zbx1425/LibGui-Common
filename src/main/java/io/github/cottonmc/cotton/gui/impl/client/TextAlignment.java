@@ -1,26 +1,26 @@
 package io.github.cottonmc.cotton.gui.impl.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.text.OrderedText;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.util.FormattedCharSequence;
 
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
 
 public final class TextAlignment {
-	public static int getTextOffsetX(HorizontalAlignment alignment, int width, OrderedText text) {
+	public static int getTextOffsetX(HorizontalAlignment alignment, int width, FormattedCharSequence text) {
 		return switch (alignment) {
 			case LEFT -> 0;
 
 			case CENTER -> {
-				TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-				int textWidth = renderer.getWidth(text);
+				Font renderer = Minecraft.getInstance().font;
+				int textWidth = renderer.width(text);
 				yield width / 2 - textWidth / 2;
 			}
 
 			case RIGHT -> {
-				TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-				int textWidth = renderer.getWidth(text);
+				Font renderer = Minecraft.getInstance().font;
+				int textWidth = renderer.width(text);
 				yield width - textWidth;
 			}
 		};
@@ -31,14 +31,14 @@ public final class TextAlignment {
 			case TOP -> 0;
 
 			case CENTER -> {
-				TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-				int textHeight = renderer.fontHeight * lines;
+				Font renderer = Minecraft.getInstance().font;
+				int textHeight = renderer.lineHeight * lines;
 				yield height / 2 - textHeight / 2;
 			}
 
 			case BOTTOM -> {
-				TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-				int textHeight = renderer.fontHeight * lines;
+				Font renderer = Minecraft.getInstance().font;
+				int textHeight = renderer.lineHeight * lines;
 				yield height - textHeight;
 			}
 		};

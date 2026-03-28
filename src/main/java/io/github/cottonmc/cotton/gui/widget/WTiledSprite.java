@@ -2,8 +2,8 @@ package io.github.cottonmc.cotton.gui.widget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.widget.data.Texture;
@@ -130,7 +130,7 @@ public class WTiledSprite extends WSprite {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paintFrame(DrawContext context, int x, int y, Texture texture) {
+	public void paintFrame(GuiGraphics context, int x, int y, Texture texture) {
 		// Y Direction (down)
 		for (int tileYOffset = 0; tileYOffset < height; tileYOffset += tileHeight) {
 			// X Direction (right)

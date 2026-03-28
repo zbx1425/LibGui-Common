@@ -2,11 +2,11 @@ package io.github.cottonmc.test;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.StackReference;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.ItemSyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
@@ -26,30 +26,30 @@ public class TestItemDescription extends ItemSyncedGuiDescription {
 	private int g = 0;
 	private int b = 0;
 
-	public TestItemDescription(int syncId, PlayerInventory playerInventory, StackReference owner) {
+	public TestItemDescription(int syncId, Inventory playerInventory, SlotAccess owner) {
 		super(LibGuiTest.ITEM_SCREEN_HANDLER_TYPE, syncId, playerInventory, owner);
 		WGridPanel root = new WGridPanel(22);
 		root.setInsets(Insets.ROOT_PANEL);
 		this.setRootPanel(root);
-		WLabel title = new WLabel(Text.literal("Client Test Gui"), WLabel.DEFAULT_TEXT_COLOR) {
+		WLabel title = new WLabel(Component.literal("Client Test Gui"), WLabel.DEFAULT_TEXT_COLOR) {
 			@Environment(EnvType.CLIENT)
 			@Override
 			public void addTooltip(TooltipBuilder tooltip) {
-				tooltip.add(Text.literal("Radical!"));
+				tooltip.add(Component.literal("Radical!"));
 			}
 		};
 		WTiledSprite wood = new WTiledSprite(
 				8, 8, // tile width and height
 				500, // animation speed
-				Identifier.ofVanilla("textures/block/birch_planks.png"),
-				Identifier.ofVanilla("textures/block/dark_oak_planks.png"),
-				Identifier.ofVanilla("textures/block/jungle_planks.png")
+				Identifier.withDefaultNamespace("textures/block/birch_planks.png"),
+				Identifier.withDefaultNamespace("textures/block/dark_oak_planks.png"),
+				Identifier.withDefaultNamespace("textures/block/jungle_planks.png")
 		);
 		root.add(wood, 3, 3, 2, 2);
 		root.add(title, 0, 0);
 
 		WTextField text = new WTextField();
-		text.setSuggestion(Text.literal("Search"));
+		text.setSuggestion(Component.literal("Search"));
 		root.add(text, 0, 1, 8, 1);
 		text.setSize(7*18, 20);
 		/*
@@ -149,7 +149,7 @@ public class TestItemDescription extends ItemSyncedGuiDescription {
 		}
 
 		@Override
-		public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+		public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
 			ScreenDrawing.coloredRect(context, x, y, this.getWidth(), this.getHeight(), color);
 		}
 	}

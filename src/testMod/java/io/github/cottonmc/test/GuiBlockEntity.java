@@ -1,43 +1,43 @@
 package io.github.cottonmc.test;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.text.Text;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.BlockPos;
 
-public class GuiBlockEntity extends BlockEntity implements ImplementedInventory, NamedScreenHandlerFactory {
+public class GuiBlockEntity extends BlockEntity implements ImplementedInventory, MenuProvider {
 	static final int INVENTORY_SIZE = 8;
 	
-	DefaultedList<ItemStack> items =  DefaultedList.ofSize(INVENTORY_SIZE, ItemStack.EMPTY);
+	NonNullList<ItemStack> items =  NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 	
 	public GuiBlockEntity(BlockPos pos, BlockState state) {
 		super(LibGuiTest.GUI_BLOCKENTITY_TYPE, pos, state);
 	}
 
 	@Override
-	public DefaultedList<ItemStack> getItems() {
+	public NonNullList<ItemStack> getItems() {
 		return items;
 	}
 	
 	@Override
-	public boolean canPlayerUse(PlayerEntity player) {
-		return pos.isWithinDistance(player.getBlockPos(), 4.5);
+	public boolean stillValid(Player player) {
+		return worldPosition.closerThan(player.blockPosition(), 4.5);
 	}
 
 	@Override
-	public Text getDisplayName() {
-		return Text.literal("test title");
+	public Component getDisplayName() {
+		return Component.literal("test title");
 	}
 
 	@Override
-	public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-		return new TestDescription(LibGuiTest.GUI_SCREEN_HANDLER_TYPE, syncId, inv, ScreenHandlerContext.create(world, pos));
+	public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+		return new TestDescription(LibGuiTest.GUI_SCREEN_HANDLER_TYPE, syncId, inv, ContainerLevelAccess.create(level, worldPosition));
 	}
 }

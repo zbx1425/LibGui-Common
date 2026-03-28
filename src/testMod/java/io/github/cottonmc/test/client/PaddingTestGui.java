@@ -1,6 +1,6 @@
 package io.github.cottonmc.test.client;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
@@ -27,7 +27,7 @@ public class PaddingTestGui extends LightweightGuiDescription {
 
 	void addBox(WGridPanel root, int x, int y, int w, int h) {
 		root.add(new TestItemDescription.WColorBox(0xffff0000), x, y, w, h);
-		var l = new WLabel(Text.literal(w + "x" + h), 0xff00ffff);
+		var l = new WLabel(Component.literal(w + "x" + h), 0xff00ffff);
 		l.setVerticalAlignment(VerticalAlignment.CENTER);
 		l.setHorizontalAlignment(HorizontalAlignment.CENTER);
 		root.add(l, x, y, w, h);

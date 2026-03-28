@@ -1,7 +1,7 @@
 package io.github.cottonmc.test.client;
 
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
+import net.minecraft.world.item.Items;
+import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WBox;
@@ -22,15 +22,15 @@ public class ScrollingTestGui extends LightweightGuiDescription {
 		WScrollPanel scrollPanel = new WScrollPanel(box);
 
 		for (int i = 0; i < 20; i++) {
-			box.add(new WLabeledSlider(0, 10, Text.literal("Slider #" + i)));
+			box.add(new WLabeledSlider(0, 10, Component.literal("Slider #" + i)));
 		}
 
 		box.add(new WButton(new ItemIcon(Items.APPLE)));
 
-		WLabeledSlider topSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Text.literal("Top insets"));
-		WLabeledSlider bottomSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Text.literal("Bottom insets"));
-		WLabeledSlider leftSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Text.literal("Left insets"));
-		WLabeledSlider rightSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Text.literal("Right insets"));
+		WLabeledSlider topSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Component.literal("Top insets"));
+		WLabeledSlider bottomSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Component.literal("Bottom insets"));
+		WLabeledSlider leftSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Component.literal("Left insets"));
+		WLabeledSlider rightSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Component.literal("Right insets"));
 
 		topSlider.setValueChangeListener(top -> {
 			Insets insets = scrollPanel.getInsets();
@@ -61,7 +61,7 @@ public class ScrollingTestGui extends LightweightGuiDescription {
 		});
 
 		root.setGaps(2, 2);
-		root.add(new WLabel(Text.literal("Scrolling test")).setVerticalAlignment(VerticalAlignment.CENTER), 0, 0, 6, 2);
+		root.add(new WLabel(Component.literal("Scrolling test")).setVerticalAlignment(VerticalAlignment.CENTER), 0, 0, 6, 2);
 		root.add(topSlider, 0, 2, 3, 1);
 		root.add(bottomSlider, 3, 2, 3, 1);
 		root.add(leftSlider, 0, 3, 3, 1);

@@ -10,18 +10,19 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.NbtSizeTracker;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.RegistryOps;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.networking.NetworkSide;
@@ -43,17 +44,17 @@ public class ScreenNetworkingImpl implements ScreenNetworking {
 		MapCodec.unitCodec(Unit.INSTANCE)
 	);
 
-	public record ScreenMessage(int syncId, Identifier message, NbtElement nbt) implements CustomPayload {
-		public static final Id<ScreenMessage> ID = new Id<>(LibGuiCommon.id("screen_message"));
-		public static final PacketCodec<RegistryByteBuf, ScreenMessage> CODEC = PacketCodec.tuple(
-			PacketCodecs.INTEGER, ScreenMessage::syncId,
-			Identifier.PACKET_CODEC, ScreenMessage::message,
-			PacketCodecs.nbt(() -> NbtSizeTracker.of(MAX_NBT_SIZE)), ScreenMessage::nbt,
+	public record ScreenMessage(int syncId, Identifier message, Tag nbt) implements CustomPacketPayload {
+		public static final Type<ScreenMessage> ID = new Type<>(LibGuiCommon.id("screen_message"));
+		public static final StreamCodec<RegistryFriendlyByteBuf, ScreenMessage> CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT, ScreenMessage::syncId,
+			Identifier.STREAM_CODEC, ScreenMessage::message,
+			ByteBufCodecs.tagCodec(() -> NbtAccounter.create(MAX_NBT_SIZE)), ScreenMessage::nbt,
 			ScreenMessage::new
 		);
 
 		@Override
-		public Id<? extends CustomPayload> getId() {
+		public Type<? extends CustomPacketPayload> type() {
 			return ID;
 		}
 	}
@@ -80,8 +81,8 @@ public class ScreenNetworkingImpl implements ScreenNetworking {
 		}
 	}
 
-	private static RegistryOps<NbtElement> getRegistryOps(DynamicRegistryManager registryManager) {
-		return registryManager.getOps(NbtOps.INSTANCE);
+	private static RegistryOps<Tag> getRegistryOps(RegistryAccess registryManager) {
+		return registryManager.createSerializationContext(NbtOps.INSTANCE);
 	}
 
 	@Override
@@ -102,9 +103,9 @@ public class ScreenNetworkingImpl implements ScreenNetworking {
 		Objects.requireNonNull(message, "message");
 		Objects.requireNonNull(encoder, "encoder");
 
-		var ops = getRegistryOps(description.getWorld().getRegistryManager());
-		NbtElement encoded = encoder.encodeStart(ops, data).getOrThrow();
-		ScreenMessage packet = new ScreenMessage(description.syncId, message, encoded);
+		var ops = getRegistryOps(description.getWorld().registryAccess());
+		Tag encoded = encoder.encodeStart(ops, data).getOrThrow();
+		ScreenMessage packet = new ScreenMessage(description.containerId, message, encoded);
 		description.getPacketSender().sendPacket(packet);
 	}
 
@@ -130,14 +131,14 @@ public class ScreenNetworkingImpl implements ScreenNetworking {
 		});
 	}
 
-	public static void handle(Executor executor, PlayerEntity player, ScreenMessage packet) {
-		ScreenHandler screenHandler = player.currentScreenHandler;
+	public static void handle(Executor executor, Player player, ScreenMessage packet) {
+		AbstractContainerMenu screenHandler = player.containerMenu;
 
 		if (!(screenHandler instanceof SyncedGuiDescription guiDescription)) {
 			LOGGER.error("Received message packet for screen handler {} which is not a SyncedGuiDescription", screenHandler);
 			return;
-		} else if (packet.syncId() != screenHandler.syncId) {
-			LOGGER.error("Received message for sync ID {}, current sync ID: {}", packet.syncId(), screenHandler.syncId);
+		} else if (packet.syncId() != screenHandler.containerId) {
+			LOGGER.error("Received message for sync ID {}, current sync ID: {}", packet.syncId(), screenHandler.containerId);
 			return;
 		}
 
@@ -150,8 +151,8 @@ public class ScreenNetworkingImpl implements ScreenNetworking {
 		}
 	}
 
-	private static <D> void processMessage(Executor executor, PlayerEntity player, ScreenMessage packet, ScreenHandler description, ReceiverData<D> receiverData) {
-		var ops = getRegistryOps(player.getRegistryManager());
+	private static <D> void processMessage(Executor executor, Player player, ScreenMessage packet, AbstractContainerMenu description, ReceiverData<D> receiverData) {
+		var ops = getRegistryOps(player.registryAccess());
 		var result = receiverData.decoder().parse(ops, packet.nbt());
 
 		switch (result) {

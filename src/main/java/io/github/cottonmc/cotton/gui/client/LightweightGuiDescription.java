@@ -1,6 +1,6 @@
 package io.github.cottonmc.cotton.gui.client;
 
-import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.world.inventory.ContainerData;
 
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.ValidatedSlot;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class LightweightGuiDescription implements GuiDescription {
 	protected WPanel rootPanel = new WGridPanel().setInsets(Insets.ROOT_PANEL);
-	protected PropertyDelegate propertyDelegate;
+	protected ContainerData propertyDelegate;
 	protected WWidget focus;
 
 	protected int titleColor = WLabel.DEFAULT_TEXT_COLOR;
@@ -83,12 +83,12 @@ public class LightweightGuiDescription implements GuiDescription {
 
 	@Override
 	@Nullable
-	public PropertyDelegate getPropertyDelegate() {
+	public ContainerData getPropertyDelegate() {
 		return propertyDelegate;
 	}
 
 	@Override
-	public GuiDescription setPropertyDelegate(PropertyDelegate delegate) {
+	public GuiDescription setPropertyDelegate(ContainerData delegate) {
 		this.propertyDelegate = delegate;
 		return this;
 	}

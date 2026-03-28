@@ -1,24 +1,24 @@
 package io.github.cottonmc.cotton.gui.impl.mixin.client;
 
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.resources.Identifier;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(SliderWidget.class)
-public interface SliderWidgetAccessor {
-	@Accessor("TEXTURE")
+@Mixin(AbstractSliderButton.class)
+public interface AbstractSliderButtonAccessor {
+	@Accessor("SLIDER_SPRITE")
 	static Identifier libgui$getTexture() {
 		throw new AssertionError();
 	}
 
-	@Accessor("HANDLE_TEXTURE")
+	@Accessor("SLIDER_HANDLE_SPRITE")
 	static Identifier libgui$getHandleTexture() {
 		throw new AssertionError();
 	}
 
-	@Accessor("HANDLE_HIGHLIGHTED_TEXTURE")
+	@Accessor("SLIDER_HANDLE_HIGHLIGHTED_SPRITE")
 	static Identifier libgui$getHandleHighlightedTexture() {
 		throw new AssertionError();
 	}

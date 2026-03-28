@@ -3,7 +3,7 @@ package io.github.cottonmc.cotton.gui;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.world.inventory.ContainerData;
 
 import io.github.cottonmc.cotton.gui.widget.WPanel;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
@@ -50,7 +50,7 @@ public interface GuiDescription {
 	GuiDescription setTitleColor(int lightColor, int darkColor);
 
 	/** Sets the object which manages the integer properties used by WBars */
-	public GuiDescription setPropertyDelegate(PropertyDelegate delegate);
+	public GuiDescription setPropertyDelegate(ContainerData delegate);
 	
 	/** Typical users won't call this. This adds a Slot to Container/Controller-based guis, and does nothing on lightweight guis. */
 	public void addSlotPeer(ValidatedSlot slot);
@@ -80,7 +80,7 @@ public interface GuiDescription {
 
 	/** Gets the object which manages the integer properties used by WBars and such. */
 	@Nullable
-	public PropertyDelegate getPropertyDelegate();
+	public ContainerData getPropertyDelegate();
 	
 	/** Tests whether the widget is the currently-focused one. */
 	public boolean isFocused(WWidget widget);

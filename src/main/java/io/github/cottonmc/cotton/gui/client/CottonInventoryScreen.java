@@ -1,17 +1,17 @@
 package io.github.cottonmc.cotton.gui.client;
 
 import com.mojang.datafixers.util.Unit;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <T> the description type
  */
-public class CottonInventoryScreen<T extends SyncedGuiDescription> extends HandledScreen<T> implements CottonScreenImpl {
+public class CottonInventoryScreen<T extends SyncedGuiDescription> extends AbstractContainerScreen<T> implements CottonScreenImpl {
 	private static final VisualLogger LOGGER = new VisualLogger(CottonInventoryScreen.class);
 	protected SyncedGuiDescription description;
 	@Nullable protected WWidget lastResponder = null;
@@ -48,8 +48,8 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	 * @param inventory   the player inventory
 	 * @since 5.2.0
 	 */
-	public CottonInventoryScreen(T description, PlayerInventory inventory) {
-		this(description, inventory, ScreenTexts.EMPTY);
+	public CottonInventoryScreen(T description, Inventory inventory) {
+		this(description, inventory, CommonComponents.EMPTY);
 	}
 
 	/**
@@ -60,13 +60,13 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	 * @param title       the screen title
 	 * @since 5.2.0
 	 */
-	public CottonInventoryScreen(T description, PlayerInventory inventory, Text title) {
+	public CottonInventoryScreen(T description, Inventory inventory, Component title) {
 		super(description, inventory, title);
 		this.description = description;
 		width = 18*9;
 		height = 18*9;
-		this.backgroundWidth = 18*9;
-		this.backgroundHeight = 18*9;
+		this.imageWidth = 18*9;
+		this.imageHeight = 18*9;
 		description.getRootPanel().validate(description);
 	}
 
@@ -76,7 +76,7 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	 * @param description the GUI description
 	 * @param player     the player
 	 */
-	public CottonInventoryScreen(T description, PlayerEntity player) {
+	public CottonInventoryScreen(T description, Player player) {
 		this(description, player.getInventory());
 	}
 
@@ -87,7 +87,7 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	 * @param player      the player
 	 * @param title       the screen title
 	 */
-	public CottonInventoryScreen(T description, PlayerEntity player, Text title) {
+	public CottonInventoryScreen(T description, Player player, Component title) {
 		this(description, player.getInventory(), title);
 	}
 	
@@ -112,7 +112,7 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 		reposition(width, height);
 
 		if (root != null) {
-			Element rootPanelElement = FocusElements.ofPanel(root);
+			GuiEventListener rootPanelElement = FocusElements.ofPanel(root);
 			((ScreenAccessor) this).libgui$getChildren().add(rootPanelElement);
 			setInitialFocus(rootPanelElement);
 		} else {
@@ -162,23 +162,23 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 			clearPeers();
 			basePanel.validate(description);
 
-			backgroundWidth = basePanel.getWidth();
-			backgroundHeight = basePanel.getHeight();
+			imageWidth = basePanel.getWidth();
+			imageHeight = basePanel.getHeight();
 			
 			//DEBUG
-			if (backgroundWidth<16) backgroundWidth=300;
-			if (backgroundHeight<16) backgroundHeight=300;
+			if (imageWidth <16) imageWidth =300;
+			if (imageHeight <16) imageHeight =300;
 		}
 
-		titleX = description.getTitlePos().x();
-		titleY = description.getTitlePos().y();
+		titleLabelX = description.getTitlePos().x();
+		titleLabelY = description.getTitlePos().y();
 
 		if (!description.isFullscreen()) {
-			x = (screenWidth / 2) - (backgroundWidth / 2);
-			y = (screenHeight / 2) - (backgroundHeight / 2);
+			leftPos = (screenWidth / 2) - (imageWidth / 2);
+			topPos = (screenHeight / 2) - (imageHeight / 2);
 		} else {
-			x = 0;
-			y = 0;
+			leftPos = 0;
+			topPos = 0;
 
 			if (basePanel != null) {
 				basePanel.setSize(screenWidth, screenHeight);
@@ -187,17 +187,17 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	}
 	
 	@Override
-	public boolean shouldPause() {
+	public boolean isPauseScreen() {
 		//...yeah, we're going to go ahead and override that.
 		return false;
 	}
 
 	@Override
-	public boolean mouseClicked(Click click, boolean doubled) {
+	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
 		super.mouseClicked(click, doubled);
 
-		int containerX = (int) click.x() - x;
-		int containerY = (int) click.y() - y;
+		int containerX = (int) click.x() - leftPos;
+		int containerY = (int) click.y() - topPos;
 		mouseInputHandler.checkFocus(containerX, containerY);
 		if (containerX<0 || containerY<0 || containerX>=width || containerY>=height) return true;
 		mouseInputHandler.onMouseDown(containerX, containerY, click, doubled);
@@ -206,22 +206,22 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	}
 
 	@Override
-	public boolean mouseReleased(Click click) {
+	public boolean mouseReleased(MouseButtonEvent click) {
 		super.mouseReleased(click);
 
-		int containerX = (int) click.x() - x;
-		int containerY = (int) click.y() - y;
+		int containerX = (int) click.x() - leftPos;
+		int containerY = (int) click.y() - topPos;
 		mouseInputHandler.onMouseUp(containerX, containerY, click);
 
 		return true;
 	}
 
 	@Override
-	public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+	public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
 		super.mouseDragged(click, offsetX, offsetY);
 
-		int containerX = (int) click.x() - x;
-		int containerY = (int) click.y() - y;
+		int containerX = (int) click.x() - leftPos;
+		int containerY = (int) click.y() - topPos;
 		mouseInputHandler.onMouseDrag(containerX, containerY, click, offsetX, offsetY);
 
 		return true;
@@ -231,8 +231,8 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
 		super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
 
-		int containerX = (int)mouseX-x;
-		int containerY = (int)mouseY-y;
+		int containerX = (int)mouseX- leftPos;
+		int containerY = (int)mouseY- topPos;
 		mouseInputHandler.onMouseScroll(containerX, containerY, horizontalAmount, verticalAmount);
 
 		return true;
@@ -242,13 +242,13 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	public void mouseMoved(double mouseX, double mouseY) {
 		super.mouseMoved(mouseX, mouseY);
 
-		int containerX = (int)mouseX-x;
-		int containerY = (int)mouseY-y;
+		int containerX = (int)mouseX- leftPos;
+		int containerY = (int)mouseY- topPos;
 		mouseInputHandler.onMouseMove(containerX, containerY);
 	}
 
 	@Override
-	public boolean charTyped(CharInput input) {
+	public boolean charTyped(CharacterEvent input) {
 		WWidget focus = description.getFocus();
 		if (focus != null && focus.onCharTyped(input) == InputResult.PROCESSED) {
 			return true;
@@ -258,7 +258,7 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	}
 
 	@Override
-	public boolean keyPressed(KeyInput input) {
+	public boolean keyPressed(KeyEvent input) {
 		WWidget focus = description.getFocus();
 		if (focus != null && focus.onKeyPressed(input) == InputResult.PROCESSED) {
 			return true;
@@ -268,7 +268,7 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	}
 
 	@Override
-	public boolean keyReleased(KeyInput input) {
+	public boolean keyReleased(KeyEvent input) {
 		WWidget focus = description.getFocus();
 		if (focus != null && focus.onKeyReleased(input) == InputResult.PROCESSED) {
 			return true;
@@ -278,7 +278,7 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	}
 
 	@Override
-	protected void drawBackground(DrawContext context, float partialTicks, int mouseX, int mouseY) {} //This is just an AbstractContainerScreen thing; most Screens don't work this way.
+	protected void renderBg(GuiGraphics context, float partialTicks, int mouseX, int mouseY) {} //This is just an AbstractContainerScreen thing; most Screens don't work this way.
 
 	/**
 	 * Paints the GUI description of this screen.
@@ -289,44 +289,44 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	 * @param delta   the tick delta
 	 * @since 9.2.0
 	 */
-	public void paintDescription(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void paintDescription(GuiGraphics context, int mouseX, int mouseY, float delta) {
 		if (description!=null) {
 			WPanel root = description.getRootPanel();
 			if (root!=null) {
-				root.paint(context, x, y, mouseX-x, mouseY-y);
+				root.paint(context, leftPos, topPos, mouseX- leftPos, mouseY- topPos);
 			}
 		}
 	}
 	
 	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float partialTicks) {
+	public void render(GuiGraphics context, int mouseX, int mouseY, float partialTicks) {
 		super.render(context, mouseX, mouseY, partialTicks);
 
 		if (description!=null) {
 			WPanel root = description.getRootPanel();
 			if (root!=null) {
-				WWidget hitChild = root.hit(mouseX-x, mouseY-y);
-				if (hitChild!=null) hitChild.renderTooltip(context, x, y, mouseX-x, mouseY-y);
+				WWidget hitChild = root.hit(mouseX- leftPos, mouseY- topPos);
+				if (hitChild!=null) hitChild.renderTooltip(context, leftPos, topPos, mouseX- leftPos, mouseY- topPos);
 			}
 		}
 		
-		drawMouseoverTooltip(context, mouseX, mouseY); //Draws the itemstack tooltips
+		renderTooltip(context, mouseX, mouseY); //Draws the itemstack tooltips
 		VisualLogger.render(context);
 	}
 
 	@Override
-	protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+	protected void renderLabels(GuiGraphics context, int mouseX, int mouseY) {
 		if (description != null && description.isTitleVisible()) {
 			int width = description.getRootPanel().getWidth();
-			ScreenDrawing.drawString(context, getTitle().asOrderedText(), description.getTitleAlignment(), titleX, titleY, width - 2 * titleX, description.getTitleColor());
+			ScreenDrawing.drawString(context, getTitle().getVisualOrderText(), description.getTitleAlignment(), titleLabelX, titleLabelY, width - 2 * titleLabelX, description.getTitleColor());
 		}
 
 		// Don't draw the player inventory label as it's drawn by the widget itself
 	}
 
 	@Override
-	protected void handledScreenTick() {
-		super.handledScreenTick();
+	protected void containerTick() {
+		super.containerTick();
 		if (description!=null) {
 			WPanel root = description.getRootPanel();
 			if (root!=null) {
@@ -338,12 +338,12 @@ public class CottonInventoryScreen<T extends SyncedGuiDescription> extends Handl
 	}
 
 	@Override
-	protected void addElementNarrations(NarrationMessageBuilder builder) {
+	protected void updateNarratedWidget(NarrationElementOutput builder) {
 		if (description != null) NarrationHelper.addNarrations(description.getRootPanel(), builder);
 	}
 
 	@Override
-	public void onDisplayed() {
+	public void added() {
 		if (description != null) {
 			ScreenNetworking networking = description.getNetworking(NetworkSide.CLIENT);
 			((ScreenNetworkingImpl) networking).markReady();

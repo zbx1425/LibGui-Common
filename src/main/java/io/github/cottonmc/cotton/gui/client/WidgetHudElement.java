@@ -2,10 +2,10 @@ package io.github.cottonmc.cotton.gui.client;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.Window;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.DeltaTracker;
+import com.mojang.blaze3d.platform.Window;
 
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import org.jetbrains.annotations.ApiStatus;
@@ -97,15 +97,15 @@ public record WidgetHudElement(WWidget widget, @Nullable Positioner positioner) 
 	}
 
 	@Override
-	public void render(DrawContext context, RenderTickCounter tickCounter) {
+	public void render(GuiGraphics context, DeltaTracker tickCounter) {
 		render(context, widget, positioner);
 	}
 
 	@ApiStatus.Internal
-	static void render(DrawContext context, WWidget widget, @Nullable Positioner positioner) {
-		Window window = MinecraftClient.getInstance().getWindow();
-		int hudWidth = window.getScaledWidth();
-		int hudHeight = window.getScaledHeight();
+	static void render(GuiGraphics context, WWidget widget, @Nullable Positioner positioner) {
+		Window window = Minecraft.getInstance().getWindow();
+		int hudWidth = window.getGuiScaledWidth();
+		int hudHeight = window.getGuiScaledHeight();
 		if (positioner != null) {
 			positioner.reposition(widget, hudWidth, hudHeight);
 		}

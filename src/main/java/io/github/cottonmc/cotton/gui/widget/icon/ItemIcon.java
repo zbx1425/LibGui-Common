@@ -2,9 +2,9 @@ package io.github.cottonmc.cotton.gui.widget.icon;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import org.joml.Matrix3x2fStack;
 
@@ -40,18 +40,18 @@ public class ItemIcon implements Icon {
 	 * @since 3.2.0
 	 */
 	public ItemIcon(Item item) {
-		this(Objects.requireNonNull(item, "item").getDefaultStack());
+		this(Objects.requireNonNull(item, "item").getDefaultInstance());
 	}
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(DrawContext context, int x, int y, int size) {
+	public void paint(GuiGraphics context, int x, int y, int size) {
 		float scale = size != 16 ? ((float) size / 16f) : 1f;
-		Matrix3x2fStack matrices = context.getMatrices();
+		Matrix3x2fStack matrices = context.pose();
 		matrices.pushMatrix();
 		matrices.translate(x, y);
 		matrices.scale(scale, scale);
-		context.drawItemWithoutEntity(stack, 0, 0);
+		context.renderFakeItem(stack, 0, 0);
 
 		if (isGhost()) {
 			// TODO: Since 1.21.6, this code just renders a translucent square on top of the item.

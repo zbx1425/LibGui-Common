@@ -5,18 +5,18 @@ import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityT
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.StackReference;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.resource.featuretoggle.FeatureFlags;
-import net.minecraft.resource.featuretoggle.FeatureSet;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,29 +27,29 @@ public class LibGuiTest implements ModInitializer {
 	public static final String MODID = "libgui-test";
 
 	public static BlockEntityType<GuiBlockEntity> GUI_BLOCKENTITY_TYPE;
-	public static ScreenHandlerType<TestDescription> GUI_SCREEN_HANDLER_TYPE;
-	public static ScreenHandlerType<TestItemDescription> ITEM_SCREEN_HANDLER_TYPE;
-	public static ScreenHandlerType<ReallySimpleDescription> REALLY_SIMPLE_SCREEN_HANDLER_TYPE;
+	public static MenuType<TestDescription> GUI_SCREEN_HANDLER_TYPE;
+	public static MenuType<TestItemDescription> ITEM_SCREEN_HANDLER_TYPE;
+	public static MenuType<ReallySimpleDescription> REALLY_SIMPLE_SCREEN_HANDLER_TYPE;
 
 	@Override
 	public void onInitialize() {
 		TestBlocks.register();
 		TestItems.register();
 		GUI_BLOCKENTITY_TYPE = FabricBlockEntityTypeBuilder.create(GuiBlockEntity::new, TestBlocks.GUI).build();
-		Registry.register(Registries.BLOCK_ENTITY_TYPE, id("gui"), GUI_BLOCKENTITY_TYPE);
+		Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("gui"), GUI_BLOCKENTITY_TYPE);
 		
-		GUI_SCREEN_HANDLER_TYPE = new ScreenHandlerType<>((int syncId, PlayerInventory inventory) -> {
-			return new TestDescription(GUI_SCREEN_HANDLER_TYPE, syncId, inventory, ScreenHandlerContext.EMPTY);
-		}, FeatureSet.of(FeatureFlags.VANILLA));
-		Registry.register(Registries.SCREEN_HANDLER, id("gui"), GUI_SCREEN_HANDLER_TYPE);
+		GUI_SCREEN_HANDLER_TYPE = new MenuType<>((int syncId, Inventory inventory) -> {
+			return new TestDescription(GUI_SCREEN_HANDLER_TYPE, syncId, inventory, ContainerLevelAccess.NULL);
+		}, FeatureFlagSet.of(FeatureFlags.VANILLA));
+		Registry.register(BuiltInRegistries.MENU, id("gui"), GUI_SCREEN_HANDLER_TYPE);
 		ITEM_SCREEN_HANDLER_TYPE = new ExtendedScreenHandlerType<>((syncId, inventory, slot) -> {
-			StackReference handStack = StackReference.of(inventory.player, slot);
+			SlotAccess handStack = SlotAccess.forEquipmentSlot(inventory.player, slot);
 			return new TestItemDescription(syncId, inventory, handStack);
-		}, PacketCodecs.codec(EquipmentSlot.CODEC).cast());
-		Registry.register(Registries.SCREEN_HANDLER, id("item_gui"), ITEM_SCREEN_HANDLER_TYPE);
+		}, ByteBufCodecs.fromCodec(EquipmentSlot.CODEC).cast());
+		Registry.register(BuiltInRegistries.MENU, id("item_gui"), ITEM_SCREEN_HANDLER_TYPE);
 
-		REALLY_SIMPLE_SCREEN_HANDLER_TYPE = new ScreenHandlerType<>(ReallySimpleDescription::new, FeatureSet.of(FeatureFlags.VANILLA));
-		Registry.register(Registries.SCREEN_HANDLER, id("really_simple"), REALLY_SIMPLE_SCREEN_HANDLER_TYPE);
+		REALLY_SIMPLE_SCREEN_HANDLER_TYPE = new MenuType<>(ReallySimpleDescription::new, FeatureFlagSet.of(FeatureFlags.VANILLA));
+		Registry.register(BuiltInRegistries.MENU, id("really_simple"), REALLY_SIMPLE_SCREEN_HANDLER_TYPE);
 
 		Optional<ModContainer> containerOpt = FabricLoader.getInstance().getModContainer("jankson");
 		if (containerOpt.isPresent()) {
@@ -74,6 +74,6 @@ public class LibGuiTest implements ModInitializer {
 	}
 
 	public static Identifier id(String path) {
-		return Identifier.of(MODID, path);
+		return Identifier.fromNamespaceAndPath(MODID, path);
 	}
 }

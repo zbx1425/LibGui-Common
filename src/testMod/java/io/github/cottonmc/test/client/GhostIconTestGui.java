@@ -1,7 +1,7 @@
 package io.github.cottonmc.test.client;
 
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
+import net.minecraft.world.item.Items;
+import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WButton;
@@ -15,8 +15,8 @@ public class GhostIconTestGui extends LightweightGuiDescription {
 		root.setGaps(2, 2);
 
 		ItemIcon icon = new ItemIcon(Items.CACTUS);
-		WButton button = new WButton(icon, Text.literal("Hello world"));
-		WToggleButton ghostToggle = new WToggleButton(Text.literal("Ghost"));
+		WButton button = new WButton(icon, Component.literal("Hello world"));
+		WToggleButton ghostToggle = new WToggleButton(Component.literal("Ghost"));
 		ghostToggle.setOnToggle(icon::setGhost);
 
 		root.add(button, 0, 0, 5, 1);

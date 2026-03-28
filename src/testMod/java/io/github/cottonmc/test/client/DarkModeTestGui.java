@@ -1,7 +1,7 @@
 package io.github.cottonmc.test.client;
 
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WButton;
@@ -24,17 +24,17 @@ public final class DarkModeTestGui extends LightweightGuiDescription {
 		root.setInsets(Insets.ROOT_PANEL);
 		root.setGaps(3, 3);
 
-		root.add(new WButton(Text.literal("Button A")), 0, 0, 3, 1);
-		root.add(new WButton(Text.literal("Button B")), 0, 1, 3, 1);
-		root.add(new WText(Text.literal("Text")), 0, 2, 3, 1);
-		root.add(new WLabeledSlider(1, 100, Text.literal("Slider A")), 3, 0, 3, 1);
-		root.add(new WLabeledSlider(1, 100, Axis.VERTICAL, Text.literal("Slider B")), 6, 0, 1, 3);
+		root.add(new WButton(Component.literal("Button A")), 0, 0, 3, 1);
+		root.add(new WButton(Component.literal("Button B")), 0, 1, 3, 1);
+		root.add(new WText(Component.literal("Text")), 0, 2, 3, 1);
+		root.add(new WLabeledSlider(1, 100, Component.literal("Slider A")), 3, 0, 3, 1);
+		root.add(new WLabeledSlider(1, 100, Axis.VERTICAL, Component.literal("Slider B")), 6, 0, 1, 3);
 		root.add(new WSlider(1, 100, Axis.HORIZONTAL), 3, 1, 3, 1);
-		root.add(new WLabel(Text.literal("Label")), 3, 2, 3, 1);
+		root.add(new WLabel(Component.literal("Label")), 3, 2, 3, 1);
 		root.add(new WScrollBar(Axis.HORIZONTAL), 0, 3, 3, 1);
 		root.add(new WDynamicLabel(() -> "Dynamic label: " + (darkMode ? "dark mode" : "light mode")),
 				3, 3, 3, 1);
-		var toggle = new WToggleButton(Text.literal("Toggle button"));
+		var toggle = new WToggleButton(Component.literal("Toggle button"));
 		toggle.setOnToggle(on -> darkMode = on);
 		root.add(toggle, 0, 4, 6, 1);
 

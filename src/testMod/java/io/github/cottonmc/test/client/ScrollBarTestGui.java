@@ -1,7 +1,7 @@
 package io.github.cottonmc.test.client;
 
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
@@ -35,14 +35,14 @@ public class ScrollBarTestGui extends LightweightGuiDescription {
 		WScrollBar scrollBarRight = new WScrollBar(Axis.VERTICAL);
 		root.add(scrollBarRight, 248, 18, 8, 202);
 
-		WLabel label = new WLabel(Text.of("Scrolling Speed: 4"));
+		WLabel label = new WLabel(Component.literal("Scrolling Speed: 4"));
 		label.setHorizontalAlignment(HorizontalAlignment.CENTER);
 		label.setVerticalAlignment(VerticalAlignment.CENTER);
 		root.add(label, 32, 112, 192, 16);
 
 		WSlider slider = new WSlider(1, 100, Axis.HORIZONTAL);
 		slider.setDraggingFinishedListener(i -> {
-			label.setText(Text.of("Scrolling Speed: " + i));
+			label.setText(Component.literal("Scrolling Speed: " + i));
 
 			scrollBarTop.setScrollingSpeed(i);
 			scrollBarDown.setScrollingSpeed(i);

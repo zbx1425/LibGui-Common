@@ -2,17 +2,17 @@ package io.github.cottonmc.cotton.gui.widget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.impl.client.NarrationMessages;
 import io.github.cottonmc.cotton.gui.impl.client.WidgetTextures;
-import io.github.cottonmc.cotton.gui.impl.mixin.client.SliderWidgetAccessor;
+import io.github.cottonmc.cotton.gui.impl.mixin.client.AbstractSliderButtonAccessor;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * @see WAbstractSlider for more information about listeners
  */
 public class WLabeledSlider extends WAbstractSlider {
-	@Nullable private Text label = null;
+	@Nullable private Component label = null;
 	@Nullable private LabelUpdater labelUpdater = null;
 	private HorizontalAlignment labelAlignment = HorizontalAlignment.CENTER;
 
@@ -60,7 +60,7 @@ public class WLabeledSlider extends WAbstractSlider {
 	 * @param axis the slider axis
 	 * @param label the slider label (can be null)
 	 */
-	public WLabeledSlider(int min, int max, Axis axis, @Nullable Text label) {
+	public WLabeledSlider(int min, int max, Axis axis, @Nullable Component label) {
 		this(min, max, axis);
 		this.label = label;
 	}
@@ -72,7 +72,7 @@ public class WLabeledSlider extends WAbstractSlider {
 	 * @param max the maximum value
 	 * @param label the slider label (can be null)
 	 */
-	public WLabeledSlider(int min, int max, @Nullable Text label) {
+	public WLabeledSlider(int min, int max, @Nullable Component label) {
 		this(min, max);
 		this.label = label;
 	}
@@ -83,7 +83,7 @@ public class WLabeledSlider extends WAbstractSlider {
 	 * @return the label
 	 */
 	@Nullable
-	public Text getLabel() {
+	public Component getLabel() {
 		return label;
 	}
 
@@ -92,7 +92,7 @@ public class WLabeledSlider extends WAbstractSlider {
 	 *
 	 * @param label the new label
 	 */
-	public void setLabel(@Nullable Text label) {
+	public void setLabel(@Nullable Component label) {
 		this.label = label;
 	}
 
@@ -153,7 +153,7 @@ public class WLabeledSlider extends WAbstractSlider {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
 		int aWidth = axis == Axis.HORIZONTAL ? width : height;
 		int aHeight = axis == Axis.HORIZONTAL ? height : width;
 		int rotMouseX = axis == Axis.HORIZONTAL
@@ -161,14 +161,14 @@ public class WLabeledSlider extends WAbstractSlider {
 				: (direction == Direction.UP ? height - mouseY : mouseY);
 		int rotMouseY = axis == Axis.HORIZONTAL ? mouseY : mouseX;
 
-		var matrices = context.getMatrices();
+		var matrices = context.pose();
 		matrices.pushMatrix();
 		matrices.translate(x, y);
 		if (axis == Axis.VERTICAL) {
 			matrices.translate(0, height);
-			matrices.rotate(-MathHelper.HALF_PI);
+			matrices.rotate(-Mth.HALF_PI);
 		}
-		context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SliderWidgetAccessor.libgui$getTexture(), 0, 0, aWidth, aHeight);
+		context.blitSprite(RenderPipelines.GUI_TEXTURED, AbstractSliderButtonAccessor.libgui$getTexture(), 0, 0, aWidth, aHeight);
 
 		int thumbX = Math.round(coordToValueRatio * (value - min));
 		int thumbY = 0;
@@ -178,21 +178,21 @@ public class WLabeledSlider extends WAbstractSlider {
 
 		var thumbTextures = WidgetTextures.getLabeledSliderHandleTextures(shouldRenderInDarkMode());
 		var thumbTexture = thumbTextures.get(true, dragging || hovering);
-		context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, thumbTexture, thumbX, thumbY, thumbWidth, thumbHeight);
+		context.blitSprite(RenderPipelines.GUI_TEXTURED, thumbTexture, thumbX, thumbY, thumbWidth, thumbHeight);
 
 		if (label != null) {
 			int color = isMouseInsideBounds(mouseX, mouseY) ? 0xFF_FFFFA0 : 0xFF_E0E0E0;
-			ScreenDrawing.drawStringWithShadow(context, label.asOrderedText(), labelAlignment, 2, aHeight / 2 - 4, aWidth - 4, color);
+			ScreenDrawing.drawStringWithShadow(context, label.getVisualOrderText(), labelAlignment, 2, aHeight / 2 - 4, aWidth - 4, color);
 		}
 		matrices.popMatrix();
 	}
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void addNarrations(NarrationMessageBuilder builder) {
+	public void addNarrations(NarrationElementOutput builder) {
 		if (getLabel() != null) {
-			builder.put(NarrationPart.TITLE, Text.translatable(NarrationMessages.LABELED_SLIDER_TITLE_KEY, getLabel(), value, min, max));
-			builder.put(NarrationPart.USAGE, NarrationMessages.SLIDER_USAGE);
+			builder.add(NarratedElementType.TITLE, Component.translatable(NarrationMessages.LABELED_SLIDER_TITLE_KEY, getLabel(), value, min, max));
+			builder.add(NarratedElementType.USAGE, NarrationMessages.SLIDER_USAGE);
 		} else {
 			super.addNarrations(builder);
 		}
@@ -211,6 +211,6 @@ public class WLabeledSlider extends WAbstractSlider {
 		 * @param value the slider value
 		 * @return the label
 		 */
-		Text updateLabel(int value);
+		Component updateLabel(int value);
 	}
 }

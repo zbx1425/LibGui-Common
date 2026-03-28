@@ -5,7 +5,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 /**
  * A holder for an automatically synced data value.
- * This is similar to vanilla {@linkplain net.minecraft.screen.PropertyDelegate property delegates},
+ * This is similar to vanilla {@linkplain net.minecraft.world.inventory.ContainerData property delegates},
  * which only work for ints.
  *
  * <p>You can use data slots to sync a single data value from the server to the client or vice versa.

@@ -2,16 +2,16 @@ package io.github.cottonmc.cotton.gui.widget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.impl.LibGuiCommon;
@@ -32,7 +32,7 @@ public class WToggleButton extends WWidget {
 	protected Texture offImage;
 	protected Texture focusImage = DEFAULT_FOCUS_IMAGE;
 
-	@Nullable protected Text label = null;
+	@Nullable protected Component label = null;
 
 	protected boolean isOn = false;
 	@Nullable protected Consumer<Boolean> onToggle = null;
@@ -52,7 +52,7 @@ public class WToggleButton extends WWidget {
 	 *
 	 * @param label the button label
 	 */
-	public WToggleButton(Text label) {
+	public WToggleButton(Component label) {
 		this(DEFAULT_ON_IMAGE, DEFAULT_OFF_IMAGE);
 		this.label = label;
 	}
@@ -74,7 +74,7 @@ public class WToggleButton extends WWidget {
 	 * @param offImage the toggled off image
 	 * @param label    the button label
 	 */
-	public WToggleButton(Identifier onImage, Identifier offImage, Text label) {
+	public WToggleButton(Identifier onImage, Identifier offImage, Component label) {
 		this(new Texture(onImage), new Texture(offImage), label);
 	}
 
@@ -98,7 +98,7 @@ public class WToggleButton extends WWidget {
 	 * @param label    the button label
 	 * @since 3.0.0
 	 */
-	public WToggleButton(Texture onImage, Texture offImage, Text label) {
+	public WToggleButton(Texture onImage, Texture offImage, Component label) {
 		this.onImage = onImage;
 		this.offImage = offImage;
 		this.label = label;
@@ -106,14 +106,14 @@ public class WToggleButton extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
 		ScreenDrawing.texturedRect(context, x, y, 18, 18, isOn ? onImage : offImage, 0xFFFFFFFF);
 		if (isFocused()) {
 			ScreenDrawing.texturedRect(context, x, y, 18, 18, focusImage, 0xFFFFFFFF);
 		}
 
 		if (label!=null) {
-			ScreenDrawing.drawString(context, label.asOrderedText(), x + 22, y+6, shouldRenderInDarkMode() ? darkmodeColor : color);
+			ScreenDrawing.drawString(context, label.getVisualOrderText(), x + 22, y+6, shouldRenderInDarkMode() ? darkmodeColor : color);
 		}
 	}
 	
@@ -129,13 +129,13 @@ public class WToggleButton extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public InputResult onClick(Click click, boolean doubled) {
+	public InputResult onClick(MouseButtonEvent click, boolean doubled) {
 		onClick();
 		return InputResult.PROCESSED;
 	}
 
 	@Override
-	public InputResult onKeyPressed(KeyInput input) {
+	public InputResult onKeyPressed(KeyEvent input) {
 		if (isActivationKey(input.key())) {
 			onClick();
 			return InputResult.PROCESSED;
@@ -146,7 +146,7 @@ public class WToggleButton extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	private void onClick() {
-		MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
 		this.isOn = !this.isOn;
 		onToggle(this.isOn);
@@ -172,11 +172,11 @@ public class WToggleButton extends WWidget {
 	}
 
 	@Nullable
-	public Text getLabel() {
+	public Component getLabel() {
 		return label;
 	}
 
-	public WToggleButton setLabel(@Nullable Text label) {
+	public WToggleButton setLabel(@Nullable Component label) {
 		this.label = label;
 		return this;
 	}
@@ -217,22 +217,22 @@ public class WToggleButton extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void addNarrations(NarrationMessageBuilder builder) {
-		Text onOff = isOn ? NarrationMessages.TOGGLE_BUTTON_ON : NarrationMessages.TOGGLE_BUTTON_OFF;
-		Text title;
+	public void addNarrations(NarrationElementOutput builder) {
+		Component onOff = isOn ? NarrationMessages.TOGGLE_BUTTON_ON : NarrationMessages.TOGGLE_BUTTON_OFF;
+		Component title;
 
 		if (label != null) {
-			title = Text.translatable(NarrationMessages.TOGGLE_BUTTON_NAMED_KEY, label, onOff);
+			title = Component.translatable(NarrationMessages.TOGGLE_BUTTON_NAMED_KEY, label, onOff);
 		} else {
-			title = Text.translatable(NarrationMessages.TOGGLE_BUTTON_UNNAMED_KEY, onOff);
+			title = Component.translatable(NarrationMessages.TOGGLE_BUTTON_UNNAMED_KEY, onOff);
 		}
 
-		builder.put(NarrationPart.TITLE, title);
+		builder.add(NarratedElementType.TITLE, title);
 
 		if (isFocused()) {
-			builder.put(NarrationPart.USAGE, NarrationMessages.Vanilla.BUTTON_USAGE_FOCUSED);
+			builder.add(NarratedElementType.USAGE, NarrationMessages.Vanilla.BUTTON_USAGE_FOCUSED);
 		} else if (isHovered()) {
-			builder.put(NarrationPart.USAGE, NarrationMessages.Vanilla.BUTTON_USAGE_HOVERED);
+			builder.add(NarratedElementType.USAGE, NarrationMessages.Vanilla.BUTTON_USAGE_HOVERED);
 		}
 	}
 }

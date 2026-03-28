@@ -2,12 +2,12 @@ package io.github.cottonmc.cotton.gui.impl.client;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.Item;
-import net.minecraft.util.Pair;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.Item;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.Util;
-import net.minecraft.util.crash.CrashException;
-import net.minecraft.util.crash.CrashReport;
+import net.minecraft.ReportedException;
+import net.minecraft.CrashReport;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ public final class ItemUseChecker {
 			StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
 	// List of banned item use methods.
-	private static final List<Pair<String, MethodType>> ITEM_USE_METHODS = Util.make(new ArrayList<>(), result -> {
+	private static final List<Tuple<String, MethodType>> ITEM_USE_METHODS = Util.make(new ArrayList<>(), result -> {
 		MappingResolver resolver = FabricLoader.getInstance().getMappingResolver();
 
 		String hand = "class_1268";
@@ -49,7 +49,7 @@ public final class ItemUseChecker {
 		result.add(resolveItemMethod(resolver, "method_7847", actionResult, itemStack, playerEntity, livingEntity, hand));
 	});
 
-	private static Pair<String, MethodType> resolveItemMethod(MappingResolver resolver, String name, String returnType, String... parameterTypes) {
+	private static Tuple<String, MethodType> resolveItemMethod(MappingResolver resolver, String name, String returnType, String... parameterTypes) {
 		// Build intermediary descriptor for resolving the method in the mappings.
 		StringBuilder desc = new StringBuilder("(");
 		for (String type : parameterTypes) {
@@ -82,14 +82,14 @@ public final class ItemUseChecker {
 			throw new RuntimeException("Could not find Item method " + deobfName, e);
 		}
 
-		return new Pair<>(deobfName, MethodType.methodType(returnClass, paramClasses));
+		return new Tuple<>(deobfName, MethodType.methodType(returnClass, paramClasses));
 	}
 
 	/**
 	 * Checks whether the specified screen is a LibGui screen opened
 	 * from an item usage method.
 	 *
-	 * @throws CrashException if opening the screen is not allowed
+	 * @throws ReportedException if opening the screen is not allowed
 	 */
 	public static void checkSetScreen(Screen screen) {
 		if (!(screen instanceof CottonScreenImpl cs) || Boolean.getBoolean(ALLOW_ITEM_USE_PROPERTY)) return;
@@ -98,15 +98,15 @@ public final class ItemUseChecker {
 
 		// The calling variant of Item.use[OnBlock|OnEntity].
 		// If null, nothing bad happened.
-		@Nullable Pair<? extends Class<?>, String> useMethodCaller = STACK_WALKER.walk(s -> s
+		@Nullable Tuple<? extends Class<?>, String> useMethodCaller = STACK_WALKER.walk(s -> s
 						.skip(3) // checkSetScreen, setScreen injection, setScreen
 						.flatMap(frame -> {
 							if (!Item.class.isAssignableFrom(frame.getDeclaringClass())) return Stream.empty();
 
 							return ITEM_USE_METHODS.stream()
-									.filter(method -> method.getLeft().equals(frame.getMethodName()) &&
-											method.getRight().equals(frame.getMethodType()))
-									.map(method -> new Pair<>(frame.getDeclaringClass(), method.getLeft()));
+									.filter(method -> method.getA().equals(frame.getMethodName()) &&
+											method.getB().equals(frame.getMethodType()))
+									.map(method -> new Tuple<>(frame.getDeclaringClass(), method.getA()));
 						})
 						.findFirst())
 				.orElse(null);
@@ -122,13 +122,13 @@ public final class ItemUseChecker {
 					.formatted(ALLOW_ITEM_USE_PROPERTY);
 			var cause = new UnsupportedOperationException(message);
 			cause.fillInStackTrace();
-			CrashReport report = CrashReport.create(cause, "Opening screen");
-			report.addElement("Screen opening details")
-					.add("Screen class", screen.getClass().getName())
-					.add("GUI description", () -> cs.getDescription().getClass().getName())
-					.add("Item class", () -> useMethodCaller.getLeft().getName())
-					.add("Involved method", useMethodCaller.getRight());
-			throw new CrashException(report);
+			CrashReport report = CrashReport.forThrowable(cause, "Opening screen");
+			report.addCategory("Screen opening details")
+					.setDetail("Screen class", screen.getClass().getName())
+					.setDetail("GUI description", () -> cs.getDescription().getClass().getName())
+					.setDetail("Item class", () -> useMethodCaller.getA().getName())
+					.setDetail("Involved method", useMethodCaller.getB());
+			throw new ReportedException(report);
 		}
 	}
 }

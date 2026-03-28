@@ -3,15 +3,15 @@ package io.github.cottonmc.test;
 import com.mojang.datafixers.util.Unit;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Items;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.resources.Identifier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.biome.Biome;
 
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.impl.LibGuiCommon;
@@ -36,9 +36,9 @@ public class TestDescription extends SyncedGuiDescription {
 		LibGuiCommon.id("on_server_ready"),
 		BlockPos.CODEC
 	);
-	private static final ScreenMessageKey<Text> BUTTON_LABEL_DATA_SLOT = new ScreenMessageKey<>(
+	private static final ScreenMessageKey<Component> BUTTON_LABEL_DATA_SLOT = new ScreenMessageKey<>(
 		LibGuiCommon.id("button_label"),
-		TextCodecs.CODEC
+		ComponentSerialization.CODEC
 	);
 	private static final ScreenMessageKey<Integer> BUTTON_COLOR_DATA_SLOT = new ScreenMessageKey<>(
 		LibGuiCommon.id("button_color"),
@@ -54,10 +54,10 @@ public class TestDescription extends SyncedGuiDescription {
 	};
 
 	private int messagesSent;
-	private DataSlot<Text> buttonLabel;
+	private DataSlot<Component> buttonLabel;
 	private DataSlot<Integer> buttonColor;
 
-	public TestDescription(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
+	public TestDescription(MenuType<?> type, int syncId, Inventory playerInventory, ContainerLevelAccess context) {
 		super(type, syncId, playerInventory, getBlockInventory(context, GuiBlockEntity.INVENTORY_SIZE), null);
 
 		WGridPanel root = (WGridPanel)this.getRootPanel();
@@ -75,33 +75,33 @@ public class TestDescription extends SyncedGuiDescription {
 
 		root.add(buttonA, 0, 3, 4, 1);
 
-		WButton buttonB = new WButton(Text.literal("Show Warnings"));
+		WButton buttonB = new WButton(Component.literal("Show Warnings"));
 		buttonB.setOnClick(() -> slot.setIcon(new TextureIcon(LibGuiTest.id("saddle.png"))));
 
 		root.add(buttonB, 5, 3, 4, 1);
 		TextureIcon testIcon = new TextureIcon(new Texture(LibGuiTest.id("icon.png")));
-		root.add(new WButton(testIcon, Text.literal("Button C")), 0, 5, 4, 1);
-		root.add(new WButton(Text.literal("Button D")), 5, 5, 4, 1);
-		root.add(new WTextField(Text.literal("Type something...")).setMaxLength(64), 0, 7, 5, 1);
+		root.add(new WButton(testIcon, Component.literal("Button C")), 0, 5, 4, 1);
+		root.add(new WButton(Component.literal("Button D")), 5, 5, 4, 1);
+		root.add(new WTextField(Component.literal("Type something...")).setMaxLength(64), 0, 7, 5, 1);
 
-		root.add(new WLabel(Text.literal("Large Glass-only output:")), 0, 9);
-		WItemSlot glassOutputSlot = WItemSlot.outputOf(blockInventory, 0).setOutputFilter(stack -> stack.isOf(Items.GLASS));
-		glassOutputSlot.setIcon(new TextureIcon(Identifier.ofVanilla("textures/block/glass.png")));
+		root.add(new WLabel(Component.literal("Large Glass-only output:")), 0, 9);
+		WItemSlot glassOutputSlot = WItemSlot.outputOf(blockInventory, 0).setOutputFilter(stack -> stack.is(Items.GLASS));
+		glassOutputSlot.setIcon(new TextureIcon(Identifier.withDefaultNamespace("textures/block/glass.png")));
 		root.add(glassOutputSlot, 4, 9);
-		WToggleButton glassIconToggle = new WToggleButton(Text.literal("Show glass icon only when empty?"));
+		WToggleButton glassIconToggle = new WToggleButton(Component.literal("Show glass icon only when empty?"));
 		glassIconToggle.setOnToggle(glassOutputSlot::setIconOnlyPaintedForEmptySlots);
 		root.add(glassIconToggle, 0, 10);
 
-		root.add(WItemSlot.of(blockInventory, 7).setIcon(new TextureIcon(LibGuiTest.id("saddle.png"))).setInputFilter(stack -> stack.isOf(Items.SADDLE)), 7, 10);
+		root.add(WItemSlot.of(blockInventory, 7).setIcon(new TextureIcon(LibGuiTest.id("saddle.png"))).setInputFilter(stack -> stack.is(Items.SADDLE)), 7, 10);
 
 		root.add(createPlayerInventoryPanel(), 0, 11);
 		System.out.println(root.toString());
 
 		this.getRootPanel().validate(this);
 
-		buttonLabel = registerDataSlot(BUTTON_LABEL_DATA_SLOT, Text.empty());
+		buttonLabel = registerDataSlot(BUTTON_LABEL_DATA_SLOT, Component.empty());
 		// You can set values outside a ready event listener.
-		if (!getWorld().isClient()) buttonLabel.set(Text.literal("Send Message"));
+		if (!getWorld().isClientSide()) buttonLabel.set(Component.literal("Send Message"));
 		// The button will never be yellow! Initial values won't be synced.
 		buttonColor = registerDataSlot(BUTTON_COLOR_DATA_SLOT, 0xFF_FFFF00, NetworkDirection.CLIENT_TO_SERVER);
 
@@ -114,13 +114,13 @@ public class TestDescription extends SyncedGuiDescription {
 			System.out.println("Received on the server " + value + " times!");
 		});
 
-		getNetworking(NetworkSide.SERVER).receive(TEST_REGISTRY_MESSAGE, Biome.REGISTRY_CODEC, value -> {
+		getNetworking(NetworkSide.SERVER).receive(TEST_REGISTRY_MESSAGE, Biome.CODEC, value -> {
 			System.out.println("Received registry entry on the server: " + value);
 		});
 
 		getNetworking(NetworkSide.SERVER).getReadyEvent().register(networking -> {
 			System.out.println("Ready to receive and send on the server!");
-			var pos = playerInventory.player.getBlockPos();
+			var pos = playerInventory.player.blockPosition();
 			networking.send(ON_SERVER_READY_MESSAGE, pos);
 		});
 
@@ -130,8 +130,8 @@ public class TestDescription extends SyncedGuiDescription {
 
 		getNetworking(NetworkSide.CLIENT).getReadyEvent().register(networking -> {
 			System.out.println("Ready to receive and send on the client!");
-			var biome = world.getBiome(playerInventory.player.getBlockPos());
-			networking.send(TEST_REGISTRY_MESSAGE, Biome.REGISTRY_CODEC, biome);
+			var biome = world.getBiome(playerInventory.player.blockPosition());
+			networking.send(TEST_REGISTRY_MESSAGE, Biome.CODEC, biome);
 		});
 
 		try {

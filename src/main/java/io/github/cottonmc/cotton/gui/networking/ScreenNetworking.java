@@ -3,7 +3,7 @@ package io.github.cottonmc.cotton.gui.networking;
 import com.mojang.serialization.Decoder;
 import com.mojang.serialization.Encoder;
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import org.jetbrains.annotations.ApiStatus;
@@ -69,7 +69,7 @@ public interface ScreenNetworking {
 	/**
 	 * Registers a message receiver for the message.
 	 *
-	 * <p>The decoder can depend on registry data and {@link net.minecraft.registry.RegistryOps} is available.
+	 * <p>The decoder can depend on registry data and {@link net.minecraft.resources.RegistryOps} is available.
 	 *
 	 * @param message  the screen message ID
 	 * @param decoder  the message decoder
@@ -83,7 +83,7 @@ public interface ScreenNetworking {
 	/**
 	 * Registers a message receiver for the message.
 	 *
-	 * <p>The codec can depend on registry data and {@link net.minecraft.registry.RegistryOps} is available.
+	 * <p>The codec can depend on registry data and {@link net.minecraft.resources.RegistryOps} is available.
 	 *
 	 * @param message  the screen message key
 	 * @param receiver the message receiver
@@ -100,7 +100,7 @@ public interface ScreenNetworking {
 	/**
 	 * Sends a screen message to the other side of the connection.
 	 *
-	 * <p>The encoder can depend on registry data and {@link net.minecraft.registry.RegistryOps} is available.
+	 * <p>The encoder can depend on registry data and {@link net.minecraft.resources.RegistryOps} is available.
 	 *
 	 * @param message the screen message ID
 	 * @param encoder the message encoder
@@ -113,7 +113,7 @@ public interface ScreenNetworking {
 	/**
 	 * Sends a screen message to the other side of the connection.
 	 *
-	 * <p>The codec can depend on registry data and {@link net.minecraft.registry.RegistryOps} is available.
+	 * <p>The codec can depend on registry data and {@link net.minecraft.resources.RegistryOps} is available.
 	 *
 	 * @param message the screen message key
 	 * @param data    the message data

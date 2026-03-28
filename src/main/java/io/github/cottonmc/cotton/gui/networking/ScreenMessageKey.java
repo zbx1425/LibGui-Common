@@ -1,7 +1,7 @@
 package io.github.cottonmc.cotton.gui.networking;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 

@@ -1,50 +1,51 @@
 package io.github.cottonmc.test;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.StackReference;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.Level;
 
 public class GuiItem extends Item {
-	public GuiItem(Settings settings) {
+	public GuiItem(Properties settings) {
 		super(settings);
 	}
 	
 	@Override
-	public ActionResult use(World world, PlayerEntity player, Hand hand) {
-		player.openHandledScreen(createScreenHandlerFactory(player, hand));
-		return ActionResult.SUCCESS;
+	public InteractionResult use(Level world, Player player, InteractionHand hand) {
+		player.openMenu(createScreenHandlerFactory(player, hand));
+		return InteractionResult.SUCCESS;
 	}
 
-	private NamedScreenHandlerFactory createScreenHandlerFactory(PlayerEntity player, Hand hand) {
+	private MenuProvider createScreenHandlerFactory(Player player, InteractionHand hand) {
 		EquipmentSlot slot = switch (hand) {
 			case MAIN_HAND -> EquipmentSlot.MAINHAND;
 			case OFF_HAND -> EquipmentSlot.OFFHAND;
 		};
-		ItemStack stack = player.getStackInHand(hand);
+		ItemStack stack = player.getItemInHand(hand);
 		return new ExtendedScreenHandlerFactory<EquipmentSlot>() {
 			@Override
-			public Text getDisplayName() {
-				return stack.getName();
+			public Component getDisplayName() {
+				return stack.getHoverName();
 			}
 
 			@Override
-			public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-				return new TestItemDescription(syncId, playerInventory, StackReference.of(player, slot));
+			public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
+				return new TestItemDescription(syncId, playerInventory, SlotAccess.forEquipmentSlot(player, slot));
 			}
 
 			@Override
-			public EquipmentSlot getScreenOpeningData(ServerPlayerEntity player) {
+			public EquipmentSlot getScreenOpeningData(ServerPlayer player) {
 				return slot;
 			}
 		};

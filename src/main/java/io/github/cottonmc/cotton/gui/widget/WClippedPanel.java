@@ -2,7 +2,7 @@ package io.github.cottonmc.cotton.gui.widget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * A panel that is clipped to only render widgets inside its bounds.
@@ -10,7 +10,7 @@ import net.minecraft.client.gui.DrawContext;
 public class WClippedPanel extends WPanel {
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
 		if (getBackgroundPainter()!=null) getBackgroundPainter().paintBackground(context, x, y, this);
 
 		context.enableScissor(x, y, x + width, y + height);

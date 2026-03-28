@@ -2,16 +2,16 @@ package io.github.cottonmc.cotton.gui.widget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.impl.client.TextAlignment;
@@ -31,21 +31,21 @@ import java.util.Objects;
  * @since 1.8.0
  */
 public class WText extends WWidget {
-	protected Text text;
+	protected Component text;
 	protected int color;
 	protected int darkmodeColor;
 	protected boolean drawShadows;
 	protected HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
 	protected VerticalAlignment verticalAlignment = VerticalAlignment.TOP;
 	@Environment(EnvType.CLIENT)
-	private List<OrderedText> wrappedLines;
+	private List<FormattedCharSequence> wrappedLines;
 	private boolean wrappingScheduled = false;
 
-	public WText(Text text) {
+	public WText(Component text) {
 		this(text, WLabel.DEFAULT_TEXT_COLOR);
 	}
 
-	public WText(Text text, int color) {
+	public WText(Component text, int color) {
 		this.text = Objects.requireNonNull(text, "text must not be null");
 		this.color = color;
 		this.darkmodeColor = (color == WLabel.DEFAULT_TEXT_COLOR) ? WLabel.DEFAULT_DARKMODE_TEXT_COLOR : color;
@@ -64,8 +64,8 @@ public class WText extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	private void wrapLines() {
-		TextRenderer font = MinecraftClient.getInstance().textRenderer;
-		wrappedLines = font.wrapLines(text, width);
+		Font font = Minecraft.getInstance().font;
+		wrappedLines = font.split(text, width);
 	}
 
 	/**
@@ -78,16 +78,16 @@ public class WText extends WWidget {
 	@Environment(EnvType.CLIENT)
 	@Nullable
 	public Style getTextStyleAt(int x, int y) {
-		TextRenderer font = MinecraftClient.getInstance().textRenderer;
+		Font font = Minecraft.getInstance().font;
 		int yOffset = TextAlignment.getTextOffsetY(verticalAlignment, height, wrappedLines.size());
-		int lineIndex = (y - yOffset) / font.fontHeight;
+		int lineIndex = (y - yOffset) / font.lineHeight;
 
 		if (lineIndex >= 0 && lineIndex < wrappedLines.size()) {
-			OrderedText line = wrappedLines.get(lineIndex);
+			FormattedCharSequence line = wrappedLines.get(lineIndex);
 			int xOffset = TextAlignment.getTextOffsetX(horizontalAlignment, width, line);
-			TextStyleCapturer textConsumer = new TextStyleCapturer(font, x - xOffset, y - yOffset - lineIndex * font.fontHeight);
-			textConsumer.text(0, 0, line);
-			return textConsumer.getStyle();
+			TextStyleCapturer textConsumer = new TextStyleCapturer(font, x - xOffset, y - yOffset - lineIndex * font.lineHeight);
+			textConsumer.accept(0, 0, line);
+			return textConsumer.result();
 		}
 
 		return null;
@@ -95,23 +95,23 @@ public class WText extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
 		if (wrappedLines == null || wrappingScheduled) {
 			wrapLines();
 			wrappingScheduled = false;
 		}
 
-		TextRenderer font = MinecraftClient.getInstance().textRenderer;
+		Font font = Minecraft.getInstance().font;
 		int yOffset = TextAlignment.getTextOffsetY(verticalAlignment, height, wrappedLines.size());
 
 		for (int i = 0; i < wrappedLines.size(); i++) {
-			OrderedText line = wrappedLines.get(i);
+			FormattedCharSequence line = wrappedLines.get(i);
 			int c = shouldRenderInDarkMode() ? darkmodeColor : color;
 
 			if (getDrawShadows()) {
-				ScreenDrawing.drawStringWithShadow(context, line, horizontalAlignment, x, y + yOffset + i * font.fontHeight, width, c);
+				ScreenDrawing.drawStringWithShadow(context, line, horizontalAlignment, x, y + yOffset + i * font.lineHeight, width, c);
 			} else {
-				ScreenDrawing.drawString(context, line, horizontalAlignment, x, y + yOffset + i * font.fontHeight, width, c);
+				ScreenDrawing.drawString(context, line, horizontalAlignment, x, y + yOffset + i * font.lineHeight, width, c);
 			}
 		}
 
@@ -121,13 +121,13 @@ public class WText extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public InputResult onClick(Click click, boolean doubled) {
+	public InputResult onClick(MouseButtonEvent click, boolean doubled) {
 		if (click.button() != 0) return InputResult.IGNORED; // only left clicks
 
 		Style hoveredTextStyle = getTextStyleAt((int) click.x(), (int) click.y());
 		if (hoveredTextStyle != null) {
-			MinecraftClient client = MinecraftClient.getInstance();
-			Screen screen = client.currentScreen;
+			Minecraft client = Minecraft.getInstance();
+			Screen screen = client.screen;
 			if (hoveredTextStyle.getClickEvent() != null) {
 				ScreenAccessor.libgui$handleClickEvent(hoveredTextStyle.getClickEvent(), client, screen);
 				return InputResult.of(true);
@@ -142,7 +142,7 @@ public class WText extends WWidget {
 	 *
 	 * @return the text
 	 */
-	public Text getText() {
+	public Component getText() {
 		return text;
 	}
 
@@ -152,7 +152,7 @@ public class WText extends WWidget {
 	 * @param text the new text
 	 * @return this text widget
 	 */
-	public WText setText(Text text) {
+	public WText setText(Component text) {
 		Objects.requireNonNull(text, "text is null");
 		this.text = text;
 		wrappingScheduled = true;
@@ -292,7 +292,7 @@ public class WText extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void addNarrations(NarrationMessageBuilder builder) {
-		builder.put(NarrationPart.TITLE, text);
+	public void addNarrations(NarrationElementOutput builder) {
+		builder.add(NarratedElementType.TITLE, text);
 	}
 }

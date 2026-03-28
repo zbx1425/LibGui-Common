@@ -1,7 +1,7 @@
 package io.github.cottonmc.test.client;
 
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
@@ -55,23 +55,23 @@ public class ListTestGui extends LightweightGuiDescription {
 	public ListTestGui() {
 		WGridPanel root = (WGridPanel) rootPanel;
 
-		List<Formatting> formattings = Arrays.stream(Formatting.values())
-				.filter(Formatting::isColor)
+		List<ChatFormatting> formattings = Arrays.stream(ChatFormatting.values())
+				.filter(ChatFormatting::isColor)
 				.toList();
 		Random random = new Random();
-		List<Text> data = Arrays.stream(LOREM)
-				.<Text>map(s -> {
-					Formatting formatting = formattings.get(random.nextInt(formattings.size()));
-					return Text.literal(s).formatted(formatting, Formatting.BOLD);
+		List<Component> data = Arrays.stream(LOREM)
+				.<Component>map(s -> {
+					ChatFormatting formatting = formattings.get(random.nextInt(formattings.size()));
+					return Component.literal(s).withStyle(formatting, ChatFormatting.BOLD);
 				})
 				.toList();
 
-		WListPanel<Text, WLorem> listPanel = new WListPanel<>(data, WLorem::new, (text, widget) -> widget.label.setText(text));
-		WLabeledSlider topSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Text.literal("Top insets"));
-		WLabeledSlider bottomSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Text.literal("Bottom insets"));
-		WLabeledSlider leftSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Text.literal("Left insets"));
-		WLabeledSlider rightSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Text.literal("Right insets"));
-		WLabeledSlider gapSlider = new WLabeledSlider(0, 16, Axis.VERTICAL, Text.literal("Gap"));
+		WListPanel<Component, WLorem> listPanel = new WListPanel<>(data, WLorem::new, (text, widget) -> widget.label.setText(text));
+		WLabeledSlider topSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Component.literal("Top insets"));
+		WLabeledSlider bottomSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Component.literal("Bottom insets"));
+		WLabeledSlider leftSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Component.literal("Left insets"));
+		WLabeledSlider rightSlider = new WLabeledSlider(0, 16, Axis.HORIZONTAL, Component.literal("Right insets"));
+		WLabeledSlider gapSlider = new WLabeledSlider(0, 16, Axis.VERTICAL, Component.literal("Gap"));
 
 		topSlider.setValue(listPanel.getInsets().top());
 		topSlider.setValueChangeListener(top -> {
@@ -122,7 +122,7 @@ public class ListTestGui extends LightweightGuiDescription {
 	}
 
 	private static class WLorem extends WGridPanel {
-		private final WLabel label = new WLabel(Text.empty());
+		private final WLabel label = new WLabel(Component.empty());
 
 		private WLorem() {
 			setInsets(Insets.ROOT_PANEL);

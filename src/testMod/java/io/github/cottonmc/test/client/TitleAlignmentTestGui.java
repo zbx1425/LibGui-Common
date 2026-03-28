@@ -1,6 +1,6 @@
 package io.github.cottonmc.test.client;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
@@ -24,8 +24,8 @@ public class TitleAlignmentTestGui extends LightweightGuiDescription {
 		rootPanel.validate(this);
 	}
 
-	private Text getLabel(HorizontalAlignment alignment) {
-		return Text.literal(alignment.name());
+	private Component getLabel(HorizontalAlignment alignment) {
+		return Component.literal(alignment.name());
 	}
 
 	@Override

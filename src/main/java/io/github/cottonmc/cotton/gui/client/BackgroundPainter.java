@@ -1,8 +1,8 @@
 package io.github.cottonmc.cotton.gui.client;
 
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.impl.LibGuiCommon;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
@@ -28,7 +28,7 @@ public interface BackgroundPainter {
 	 * @param top     The absolute position of the top of the panel, in gui-screen coordinates
 	 * @param panel   The panel being painted
 	 */
-	public void paintBackground(DrawContext context, int left, int top, WWidget panel);
+	public void paintBackground(GuiGraphics context, int left, int top, WWidget panel);
 
 	/**
 	 * The {@code VANILLA} background painter draws a vanilla-like GUI panel using nine-patch textures.
@@ -88,7 +88,7 @@ public interface BackgroundPainter {
 	 *
 	 * @param panelColor the panel background color
 	 * @return a colorful gui panel painter
-	 * @see ScreenDrawing#drawGuiPanel(DrawContext, int, int, int, int, int)
+	 * @see ScreenDrawing#drawGuiPanel(GuiGraphics, int, int, int, int, int)
 	 */
 	public static BackgroundPainter createColorful(int panelColor) {
 		return (context, left, top, panel) -> {
@@ -180,6 +180,6 @@ public interface BackgroundPainter {
 	 */
 	static BackgroundPainter createGuiSprite(Identifier texture) {
 		Objects.requireNonNull(texture, "Texture cannot be null");
-		return (context, left, top, panel) -> context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, texture, left, top, panel.getWidth(), panel.getHeight());
+		return (context, left, top, panel) -> context.blitSprite(RenderPipelines.GUI_TEXTURED, texture, left, top, panel.getWidth(), panel.getHeight());
 	}
 }

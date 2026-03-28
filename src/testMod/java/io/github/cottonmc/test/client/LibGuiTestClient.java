@@ -6,10 +6,10 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.HandledScreens;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen;
 import io.github.cottonmc.cotton.gui.client.CottonInventoryScreen;
@@ -31,17 +31,17 @@ public class LibGuiTestClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		HandledScreens.<TestDescription, CottonInventoryScreen<TestDescription>>register(
+		MenuScreens.<TestDescription, CottonInventoryScreen<TestDescription>>register(
 				LibGuiTest.GUI_SCREEN_HANDLER_TYPE,
 				CottonInventoryScreen::new
 		);
 
-		HandledScreens.<ReallySimpleDescription, CottonInventoryScreen<ReallySimpleDescription>>register(
+		MenuScreens.<ReallySimpleDescription, CottonInventoryScreen<ReallySimpleDescription>>register(
 				LibGuiTest.REALLY_SIMPLE_SCREEN_HANDLER_TYPE,
 				CottonInventoryScreen::new
 		);
 
-		HandledScreens.<TestItemDescription, CottonInventoryScreen<TestItemDescription>>register(
+		MenuScreens.<TestItemDescription, CottonInventoryScreen<TestItemDescription>>register(
 				LibGuiTest.ITEM_SCREEN_HANDLER_TYPE,
 				CottonInventoryScreen::new
 		);
@@ -49,12 +49,12 @@ public class LibGuiTestClient implements ClientModInitializer {
 		WidgetHudElement testHudElement = new WidgetHudElement(new WHudTest(), 10, -20, 10, 10);
 		testHudElement.enableTicking();
 		HudElementRegistry.addLast(LibGuiTest.id("test"), testHudElement);
-		WidgetHudElement labelHudElement = new WidgetHudElement(new WLabel(Text.literal("Test label")), 10, -30, 10, 10);
+		WidgetHudElement labelHudElement = new WidgetHudElement(new WLabel(Component.literal("Test label")), 10, -30, 10, 10);
 		HudElementRegistry.addLast(LibGuiTest.id("test_label"), labelHudElement);
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, commandRegistryAccess) -> dispatcher.register(
 				literal("libgui")
-						.then(literal("config").executes(openScreen(client -> new ConfigGui(client.currentScreen))))
+						.then(literal("config").executes(openScreen(client -> new ConfigGui(client.screen))))
 						.then(literal("tab").executes(openScreen(client -> new TabTestGui())))
 						.then(literal("scrolling").executes(openScreen(client -> new ScrollingTestGui())))
 						.then(literal("scrollbar").executes(openScreen(client -> new ScrollBarTestGui())))
@@ -71,7 +71,7 @@ public class LibGuiTestClient implements ClientModInitializer {
 						.then(literal("#182").executes(openScreen(client -> new Issue182TestGui())))
 						.then(literal("#196").executes(openScreen(client -> new Issue196TestGui())))
 						.then(literal("darkmode").executes(openScreen(client -> new DarkModeTestGui())))
-						.then(literal("titlealignment").executes(openScreen(Text.literal("test title"), client -> new TitleAlignmentTestGui())))
+						.then(literal("titlealignment").executes(openScreen(Component.literal("test title"), client -> new TitleAlignmentTestGui())))
 						.then(literal("texture").executes(openScreen(client -> new TextureTestGui())))
 						.then(literal("textalignment").executes(openScreen(client -> new TextAlignmentTestGui())))
 						.then(literal("list").executes(openScreen(client -> new ListTestGui())))
@@ -80,14 +80,14 @@ public class LibGuiTestClient implements ClientModInitializer {
 		));
 	}
 
-	private static Command<FabricClientCommandSource> openScreen(Function<MinecraftClient, LightweightGuiDescription> screenFactory) {
-		return openScreen(ScreenTexts.EMPTY, screenFactory);
+	private static Command<FabricClientCommandSource> openScreen(Function<Minecraft, LightweightGuiDescription> screenFactory) {
+		return openScreen(CommonComponents.EMPTY, screenFactory);
 	}
 
-	private static Command<FabricClientCommandSource> openScreen(Text title, Function<MinecraftClient, LightweightGuiDescription> screenFactory) {
+	private static Command<FabricClientCommandSource> openScreen(Component title, Function<Minecraft, LightweightGuiDescription> screenFactory) {
 		return context -> {
 			var client = context.getSource().getClient();
-			client.send(() -> client.setScreen(new CottonClientScreen(title, screenFactory.apply(client))));
+			client.schedule(() -> client.setScreen(new CottonClientScreen(title, screenFactory.apply(client))));
 			return Command.SINGLE_SUCCESS;
 		};
 	}

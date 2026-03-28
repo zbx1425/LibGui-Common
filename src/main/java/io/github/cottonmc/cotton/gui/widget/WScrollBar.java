@@ -2,13 +2,13 @@ package io.github.cottonmc.cotton.gui.widget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.resources.Identifier;
 
 import io.github.cottonmc.cotton.gui.impl.LibGuiCommon;
 import io.github.cottonmc.cotton.gui.impl.client.NarrationMessages;
@@ -53,12 +53,12 @@ public class WScrollBar extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
-		var matrices = context.getMatrices();
+	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
+		var matrices = context.pose();
 		boolean darkMode = shouldRenderInDarkMode();
 		var textures = WidgetTextures.getScrollBarTextures(darkMode);
 
-		context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, textures.background(), x, y, getWidth(), getHeight());
+		context.blitSprite(RenderPipelines.GUI_TEXTURED, textures.background(), x, y, getWidth(), getHeight());
 
 		Identifier thumbTexture = textures.thumb();
 
@@ -74,17 +74,17 @@ public class WScrollBar extends WWidget {
 
 		if (axis == Axis.HORIZONTAL) {
 			matrices.translate(x + 1 + getHandlePosition(), y + 1);
-			context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, thumbTexture, 0, 0, getHandleSize(), getHeight() - 2);
+			context.blitSprite(RenderPipelines.GUI_TEXTURED, thumbTexture, 0, 0, getHandleSize(), getHeight() - 2);
 
 			if (isFocused()) {
-				context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, FOCUS_TEXTURE, 0, 0, getHandleSize(), getHeight() - 2);
+				context.blitSprite(RenderPipelines.GUI_TEXTURED, FOCUS_TEXTURE, 0, 0, getHandleSize(), getHeight() - 2);
 			}
 		} else {
 			matrices.translate(x + 1, y + 1 + getHandlePosition());
-			context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, thumbTexture, 0, 0, getWidth() - 2, getHandleSize());
+			context.blitSprite(RenderPipelines.GUI_TEXTURED, thumbTexture, 0, 0, getWidth() - 2, getHandleSize());
 
 			if (isFocused()) {
-				context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, FOCUS_TEXTURE, 0, 0, getWidth() - 2, getHandleSize());
+				context.blitSprite(RenderPipelines.GUI_TEXTURED, FOCUS_TEXTURE, 0, 0, getWidth() - 2, getHandleSize());
 			}
 		}
 
@@ -157,7 +157,7 @@ public class WScrollBar extends WWidget {
 	}
 
 	@Override
-	public InputResult onMouseDown(Click click, boolean doubled) {
+	public InputResult onMouseDown(MouseButtonEvent click, boolean doubled) {
 		//TODO: Clicking before or after the handle should jump instead of scrolling
 		requestFocus();
 
@@ -174,14 +174,14 @@ public class WScrollBar extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public InputResult onMouseDrag(Click click, double offsetX, double offsetY) {
+	public InputResult onMouseDrag(MouseButtonEvent click, double offsetX, double offsetY) {
 		adjustSlider((int) click.x(), (int) click.y());
 		return InputResult.PROCESSED;
 	}
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public InputResult onMouseUp(Click click) {
+	public InputResult onMouseUp(MouseButtonEvent click) {
 		//TODO: Clicking before or after the handle should jump instead of scrolling
 		anchor = -1;
 		anchorValue = -1;
@@ -190,7 +190,7 @@ public class WScrollBar extends WWidget {
 	}
 
 	@Override
-	public InputResult onKeyPressed(KeyInput input) {
+	public InputResult onKeyPressed(KeyEvent input) {
 		WAbstractSlider.Direction direction = axis == Axis.HORIZONTAL
 				? WAbstractSlider.Direction.RIGHT
 				: WAbstractSlider.Direction.DOWN;
@@ -284,8 +284,8 @@ public class WScrollBar extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void addNarrations(NarrationMessageBuilder builder) {
-		builder.put(NarrationPart.TITLE, NarrationMessages.SCROLL_BAR_TITLE);
-		builder.put(NarrationPart.USAGE, NarrationMessages.SLIDER_USAGE);
+	public void addNarrations(NarrationElementOutput builder) {
+		builder.add(NarratedElementType.TITLE, NarrationMessages.SCROLL_BAR_TITLE);
+		builder.add(NarratedElementType.USAGE, NarrationMessages.SLIDER_USAGE);
 	}
 }

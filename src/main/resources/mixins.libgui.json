@@ -6,17 +6,17 @@
 	"plugin": "io.github.cottonmc.cotton.gui.impl.LibGuiMixinPlugin",
 
 	"mixins": [
-		"ScreenHandlerAccessor"
+		"AbstractContainerMenuAccessor"
 	],
 	"client": [
-		"client.DrawContextAccessor",
+		"client.GuiGraphicsAccessor",
 		"client.DrawnTextConsumerClickHandlerAccessor",
-		"client.HandledScreenMixin",
-		"client.MinecraftClientMixin",
-		"client.PressableWidgetAccessor",
+		"client.AbstractContainerScreenMixin",
+		"client.MinecraftMixin",
+		"client.AbstractButtonAccessor",
 		"client.ScreenAccessor",
-		"client.SliderWidgetAccessor",
-		"client.TextFieldWidgetAccessor"
+		"client.AbstractSliderButtonAccessor",
+		"client.EditBoxAccessor"
 	],
 
 	"injectors": {

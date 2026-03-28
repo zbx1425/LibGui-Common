@@ -2,13 +2,13 @@ package io.github.cottonmc.cotton.gui.widget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.LibGui;
@@ -166,7 +166,7 @@ public class WWidget {
 	 * @return {@link InputResult#PROCESSED} if the event is handled, {@link InputResult#IGNORED} otherwise.
 	 */
 	@Environment(EnvType.CLIENT)
-	public InputResult onMouseDown(Click click, boolean doubled) {
+	public InputResult onMouseDown(MouseButtonEvent click, boolean doubled) {
 		return InputResult.IGNORED;
 	}
 
@@ -180,7 +180,7 @@ public class WWidget {
 	 * @since 1.5.0
 	 */
 	@Environment(EnvType.CLIENT)
-	public InputResult onMouseDrag(Click click, double offsetX, double offsetY) {
+	public InputResult onMouseDrag(MouseButtonEvent click, double offsetX, double offsetY) {
 		return InputResult.IGNORED;
 	}
 
@@ -191,7 +191,7 @@ public class WWidget {
 	 * @return {@link InputResult#PROCESSED} if the event is handled, {@link InputResult#IGNORED} otherwise.
 	 */
 	@Environment(EnvType.CLIENT)
-	public InputResult onMouseUp(Click click) {
+	public InputResult onMouseUp(MouseButtonEvent click) {
 		return InputResult.IGNORED;
 	}
 
@@ -203,7 +203,7 @@ public class WWidget {
 	 * @return {@link InputResult#PROCESSED} if the event is handled, {@link InputResult#IGNORED} otherwise.
 	 */
 	@Environment(EnvType.CLIENT)
-	public InputResult onClick(Click click, boolean doubled) {
+	public InputResult onClick(MouseButtonEvent click, boolean doubled) {
 		return InputResult.IGNORED;
 	}
 
@@ -241,7 +241,7 @@ public class WWidget {
 	 * @return {@link InputResult#PROCESSED} if the event is handled, {@link InputResult#IGNORED} otherwise.
 	 */
 	@Environment(EnvType.CLIENT)
-	public InputResult onCharTyped(CharInput input) {
+	public InputResult onCharTyped(CharacterEvent input) {
 		return InputResult.IGNORED;
 	}
 
@@ -251,7 +251,7 @@ public class WWidget {
 	 * @return {@link InputResult#PROCESSED} if the event is handled, {@link InputResult#IGNORED} otherwise.
 	 */
 	@Environment(EnvType.CLIENT)
-	public InputResult onKeyPressed(KeyInput input) {
+	public InputResult onKeyPressed(KeyEvent input) {
 		return InputResult.IGNORED;
 	}
 
@@ -261,7 +261,7 @@ public class WWidget {
 	 * @return {@link InputResult#PROCESSED} if the event is handled, {@link InputResult#IGNORED} otherwise.
 	 */
 	@Environment(EnvType.CLIENT)
-	public InputResult onKeyReleased(KeyInput input) {
+	public InputResult onKeyReleased(KeyEvent input) {
 		return InputResult.IGNORED;
 	}
 
@@ -326,7 +326,7 @@ public class WWidget {
 	 * @since 2.0.0
 	 */
 	@Environment(EnvType.CLIENT)
-	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
 	}
 
 	/**
@@ -353,19 +353,19 @@ public class WWidget {
 	 * @param tY      the Y coordinate of the tooltip
 	 */
 	@Environment(EnvType.CLIENT)
-	public void renderTooltip(DrawContext context, int x, int y, int tX, int tY) {
+	public void renderTooltip(GuiGraphics context, int x, int y, int tX, int tY) {
 		TooltipBuilder builder = new TooltipBuilder();
 		addTooltip(builder);
 
 		if (builder.size() == 0) return;
 
-		var client = MinecraftClient.getInstance();
-		context.drawTooltip(client.textRenderer, builder.lines, HoveredTooltipPositioner.INSTANCE, tX + x, tY + y, false);
+		var client = Minecraft.getInstance();
+		context.setTooltipForNextFrame(client.font, builder.lines, DefaultTooltipPositioner.INSTANCE, tX + x, tY + y, false);
 	}
 
 	/**
 	 * Creates component peers and initializes animation data for this Widget and all its children.
-	 * The host {@linkplain net.minecraft.screen.ScreenHandler screen handler} must clear any heavyweight peers
+	 * The host {@linkplain net.minecraft.world.inventory.AbstractContainerMenu screen handler} must clear any heavyweight peers
 	 * from its records before this method is called.
 	 *
 	 * <p>This method must be called on the root panel of any screen once the widgets have been initialized.
@@ -498,7 +498,7 @@ public class WWidget {
 	 *
 	 * <p>Hovering is used by LibGui itself mostly for narration support.
 	 * For rendering, it might be preferable that you check the mouse coordinates in
-	 * {@link #paint(DrawContext, int, int, int, int) paint()} directly.
+	 * {@link #paint(GuiGraphics, int, int, int, int) paint()} directly.
 	 * That lets you react to different parts of the widget being hovered over.
 	 *
 	 * @return the {@code hovered} property
@@ -536,7 +536,7 @@ public class WWidget {
 	/**
 	 * {@return whether this widget can be narrated}
 	 *
-	 * @see #addNarrations(NarrationMessageBuilder)
+	 * @see #addNarrations(NarrationElementOutput)
 	 * @since 4.2.0
 	 */
 	public boolean isNarratable() {
@@ -554,7 +554,7 @@ public class WWidget {
 	 * @since 4.2.0
 	 */
 	@Environment(EnvType.CLIENT)
-	public void addNarrations(NarrationMessageBuilder builder) {
+	public void addNarrations(NarrationElementOutput builder) {
 	}
 
 	/**

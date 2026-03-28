@@ -2,11 +2,11 @@ package io.github.cottonmc.cotton.gui.widget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
@@ -14,7 +14,7 @@ import io.github.cottonmc.cotton.gui.widget.data.Texture;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A bar that displays int values from a {@link PropertyDelegate}.
+ * A bar that displays int values from a {@link ContainerData}.
  *
  * <p>Bars can be used for all kinds of bars including
  * progress bars (and progress arrows) and energy bars.
@@ -61,7 +61,7 @@ public class WBar extends WWidget {
 	 * <p>The current value is read from the property with ID {@link #field},
 	 * and the maximum value is usually read from the property with ID {@link #max}.
 	 */
-	protected PropertyDelegate properties;
+	protected ContainerData properties;
 	private boolean manuallySetProperties = false;
 
 	/**
@@ -81,7 +81,7 @@ public class WBar extends WWidget {
 	 * A tooltip text component. This can be used instead of {@link #tooltipLabel},
 	 * or together with it. In that case, this component will be drawn after the other label.
 	 */
-	protected Text tooltipTextComponent;
+	protected Component tooltipTextComponent;
 
 	public WBar(@Nullable Texture bg, @Nullable Texture bar, int field, int maxField) {
 		this(bg, bar, field, maxField, Direction.UP);
@@ -120,12 +120,12 @@ public class WBar extends WWidget {
 	}
 
 	/**
-	 * Adds a tooltip {@link Text} to the WBar.
+	 * Adds a tooltip {@link Component} to the WBar.
 	 *
 	 * @param label the added tooltip label
 	 * @return this bar
 	 */
-	public WBar withTooltip(Text label) {
+	public WBar withTooltip(Component label) {
 		this.tooltipTextComponent = label;
 		return this;
 	}
@@ -137,7 +137,7 @@ public class WBar extends WWidget {
 
 	@Environment(EnvType.CLIENT)
 	@Override
-	public void paint(DrawContext context, int x, int y, int mouseX, int mouseY) {
+	public void paint(GuiGraphics context, int x, int y, int mouseX, int mouseY) {
 		if (bg != null) {
 			ScreenDrawing.texturedRect(context, x, y, getWidth(), getHeight(), bg, 0xFFFFFFFF);
 		} else {
@@ -162,7 +162,7 @@ public class WBar extends WWidget {
 				int top = y + getHeight();
 				top -= barSize;
 				if (bar != null) {
-					Texture clipped = bar.withUv(bar.u1(), MathHelper.lerp(percent, bar.v2(), bar.v1()), bar.u2(), bar.v2());
+					Texture clipped = bar.withUv(bar.u1(), Mth.lerp(percent, bar.v2(), bar.v1()), bar.u2(), bar.v2());
 					ScreenDrawing.texturedRect(context, left, top, getWidth(), barSize, clipped, 0xFFFFFFFF);
 				} else {
 					ScreenDrawing.coloredRect(context, left, top, getWidth(), barSize, ScreenDrawing.colorAtOpacity(0xFFFFFF, 0.5f));
@@ -171,7 +171,7 @@ public class WBar extends WWidget {
 
 			case RIGHT -> {
 				if (bar != null) {
-					Texture clipped = bar.withUv(bar.u1(), bar.v1(), MathHelper.lerp(percent, bar.u1(), bar.u2()), bar.v2());
+					Texture clipped = bar.withUv(bar.u1(), bar.v1(), Mth.lerp(percent, bar.u1(), bar.u2()), bar.v2());
 					ScreenDrawing.texturedRect(context, x, y, barSize, getHeight(), clipped, 0xFFFFFFFF);
 				} else {
 					ScreenDrawing.coloredRect(context, x, y, barSize, getHeight(), ScreenDrawing.colorAtOpacity(0xFFFFFF, 0.5f));
@@ -180,7 +180,7 @@ public class WBar extends WWidget {
 
 			case DOWN -> {
 				if (bar != null) {
-					Texture clipped = bar.withUv(bar.u1(), bar.v1(), bar.u2(), MathHelper.lerp(percent, bar.v1(), bar.v2()));
+					Texture clipped = bar.withUv(bar.u1(), bar.v1(), bar.u2(), Mth.lerp(percent, bar.v1(), bar.v2()));
 					ScreenDrawing.texturedRect(context, x, y, getWidth(), barSize, clipped, 0xFFFFFFFF);
 				} else {
 					ScreenDrawing.coloredRect(context, x, y, getWidth(), barSize, ScreenDrawing.colorAtOpacity(0xFFFFFF, 0.5f));
@@ -192,7 +192,7 @@ public class WBar extends WWidget {
 				int top = y;
 				left -= barSize;
 				if (bar != null) {
-					Texture clipped = bar.withUv(MathHelper.lerp(percent, bar.u2(), bar.u1()), bar.v1(), bar.u2(), bar.v2());
+					Texture clipped = bar.withUv(Mth.lerp(percent, bar.u2(), bar.u1()), bar.v1(), bar.u2(), bar.v2());
 					ScreenDrawing.texturedRect(context, left, top, barSize, getHeight(), clipped, 0xFFFFFFFF);
 				} else {
 					ScreenDrawing.coloredRect(context, left, top, barSize, getHeight(), ScreenDrawing.colorAtOpacity(0xFFFFFF, 0.5f));
@@ -207,13 +207,13 @@ public class WBar extends WWidget {
 		if (tooltipLabel != null) {
 			int value = (field >= 0) ? properties.get(field) : 0;
 			int valMax = (max >= 0) ? properties.get(max) : maxValue;
-			information.add(Text.translatable(tooltipLabel, value, valMax));
+			information.add(Component.translatable(tooltipLabel, value, valMax));
 		}
 		if (tooltipTextComponent != null) {
 			try {
 				information.add(tooltipTextComponent);
 			} catch (Throwable t) {
-				information.add(Text.literal(t.getLocalizedMessage()));
+				information.add(Component.literal(t.getLocalizedMessage()));
 			}
 		}
 	}
@@ -230,7 +230,7 @@ public class WBar extends WWidget {
 	 * @return the current property delegate, or null if not initialized yet
 	 */
 	@Nullable
-	public PropertyDelegate getProperties() {
+	public ContainerData getProperties() {
 		return properties;
 	}
 
@@ -243,7 +243,7 @@ public class WBar extends WWidget {
 	 * @param properties the properties
 	 * @return this bar
 	 */
-	public WBar setProperties(PropertyDelegate properties) {
+	public WBar setProperties(ContainerData properties) {
 		this.properties = properties;
 		manuallySetProperties = properties != null;
 		return this;

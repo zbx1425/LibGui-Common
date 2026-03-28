@@ -1,9 +1,9 @@
 package io.github.cottonmc.cotton.gui.impl.mixin.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.ClickEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.ClickEvent;
 
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,10 +15,10 @@ import java.util.List;
 @Mixin(Screen.class)
 public interface ScreenAccessor {
 	@Accessor("children")
-	List<Element> libgui$getChildren();
+	List<GuiEventListener> libgui$getChildren();
 
-	@Invoker("handleClickEvent")
-	static void libgui$handleClickEvent(ClickEvent clickEvent, MinecraftClient client, @Nullable Screen screenAfterRun) {
+	@Invoker("defaultHandleGameClickEvent")
+	static void libgui$handleClickEvent(ClickEvent clickEvent, Minecraft client, @Nullable Screen screenAfterRun) {
 		throw new AssertionError("Untransformed mixin");
 	}
 }

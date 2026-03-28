@@ -1,7 +1,7 @@
 package io.github.cottonmc.cotton.gui.impl.client;
 
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.screens.Screen;
 
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import io.github.cottonmc.cotton.gui.widget.data.InputResult;
@@ -26,7 +26,7 @@ public final class MouseInputHandler<S extends Screen & CottonScreenImpl> {
 		});
 	}
 
-	public void onMouseDown(int containerX, int containerY, Click click, boolean doubled) {
+	public void onMouseDown(int containerX, int containerY, MouseButtonEvent click, boolean doubled) {
 		this.clickDoubled = doubled;
 
 		if (screen.getLastResponder() == null) {
@@ -43,7 +43,7 @@ public final class MouseInputHandler<S extends Screen & CottonScreenImpl> {
 		}
 	}
 
-	public void onMouseUp(int containerX, int containerY, Click click) {
+	public void onMouseUp(int containerX, int containerY, MouseButtonEvent click) {
 		WWidget lastResponder = screen.getLastResponder();
 
 		if (lastResponder != null) {
@@ -71,7 +71,7 @@ public final class MouseInputHandler<S extends Screen & CottonScreenImpl> {
 		screen.setLastResponder(null);
 	}
 
-	public void onMouseDrag(int containerX, int containerY, Click click, double offsetX, double offsetY) {
+	public void onMouseDrag(int containerX, int containerY, MouseButtonEvent click, double offsetX, double offsetY) {
 		WWidget lastResponder = screen.getLastResponder();
 
 		if (lastResponder != null) {
@@ -154,7 +154,7 @@ public final class MouseInputHandler<S extends Screen & CottonScreenImpl> {
 		}
 	}
 
-	public static Click clickAt(Click click, double x, double y) {
-		return new Click(x, y, click.buttonInfo());
+	public static MouseButtonEvent clickAt(MouseButtonEvent click, double x, double y) {
+		return new MouseButtonEvent(x, y, click.buttonInfo());
 	}
 }
