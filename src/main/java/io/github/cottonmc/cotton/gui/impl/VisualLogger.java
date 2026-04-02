@@ -2,7 +2,6 @@ package io.github.cottonmc.cotton.gui.impl;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -42,14 +41,6 @@ public final class VisualLogger {
 
 	private void log(String message, Object[] params, Level level, ChatFormatting formatting) {
 		logger.log(level, message, params);
-
-		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-			var text = Component.literal(clazz.getSimpleName() + '/');
-			text.append(Component.literal(level.name()).withStyle(formatting));
-			text.append(Component.literal(": " + ParameterizedMessage.format(message, params)));
-
-			WARNINGS.add(text);
-		}
 	}
 
 	@Environment(EnvType.CLIENT)

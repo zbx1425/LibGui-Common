@@ -56,33 +56,7 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// True: module classes are used in public API classes/methods/fields
-	def fabricApiModules = [
-			'fabric-api-base': true,
-			'fabric-lifecycle-events-v1': false,
-			'fabric-networking-api-v1': true,
-			'fabric-rendering-v1': false,
-			'fabric-resource-loader-v1': false,
-	]
-	fabricApiModules.forEach { module, isApi ->
-		def dependency = fabricApi.module(module, project.fabric_version)
-
-		if (isApi) {
-			api dependency
-		} else {
-			implementation dependency
-		}
-	}
-
-	implementation "io.github.cottonmc:Jankson-Fabric:${project.jankson_version}"
-	include "io.github.cottonmc:Jankson-Fabric:${project.jankson_version}"
-
 	include api("io.github.juuxel:libninepatch:${project.libninepatch_version}")
-
-	compileOnly("com.terraformersmc:modmenu:$project.modmenu_version") {
-		exclude group: 'net.fabricmc.fabric-api'
-		exclude group: 'net.fabricmc', module: 'fabric-loader'
-	}
 
 	// Test mod dependencies
 	testModImplementation sourceSets.main.output
@@ -103,7 +77,7 @@ processResources {
 
 java {
 	withSourcesJar()
-	withJavadocJar()
+//	withJavadocJar()
 
 	sourceCompatibility = JavaVersion.VERSION_25
 	targetCompatibility = JavaVersion.VERSION_25

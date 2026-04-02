@@ -1,6 +1,6 @@
 package io.github.cottonmc.test.client;
 
-import net.fabricmc.fabric.api.util.TriState;
+import io.github.cottonmc.cotton.gui.TriState;
 import net.minecraft.network.chat.Component;
 
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;

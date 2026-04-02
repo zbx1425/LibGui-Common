@@ -1,6 +1,7 @@
 package io.github.cottonmc.cotton.gui.client;
 
 import io.github.cottonmc.cotton.gui.impl.client.LibGuiClient;
+import io.github.cottonmc.cotton.gui.widget.WWidget;
 
 /**
  * This class provides access to LibGui configuration and other global data.
@@ -18,5 +19,11 @@ public final class LibGui {
 	 */
 	public static boolean isDarkMode() {
 		return LibGuiClient.config.darkMode;
+	}
+
+	public static void tick() {
+		for (WWidget widget : WidgetHudElement.tickingWidgets) {
+			widget.tick();
+		}
 	}
 }

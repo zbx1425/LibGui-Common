@@ -1,8 +1,6 @@
 package io.github.cottonmc.cotton.gui.client;
 
 import com.mojang.blaze3d.platform.Window;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -21,17 +19,9 @@ import java.util.Set;
  * @param positioner an optional positioner that moves the widget
  * @since 14.0.0
  */
-public record WidgetHudElement(WWidget widget, @Nullable Positioner positioner) implements HudElement {
+public record WidgetHudElement(WWidget widget, @Nullable Positioner positioner) {
 	@ApiStatus.Internal
-	static final Set<WWidget> tickingWidgets = new HashSet<>();
-
-	static {
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			for (WWidget widget : tickingWidgets) {
-				widget.tick();
-			}
-		});
-	}
+	public static final Set<WWidget> tickingWidgets = new HashSet<>();
 
 	/**
 	 * Constructs a new {@code WidgetHudElement} without a positioner.
@@ -96,7 +86,6 @@ public record WidgetHudElement(WWidget widget, @Nullable Positioner positioner) 
 		tickingWidgets.remove(widget);
 	}
 
-	@Override
 	public void extractRenderState(GuiGraphicsExtractor context, DeltaTracker tickCounter) {
 		render(context, widget, positioner);
 	}

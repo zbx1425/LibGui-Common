@@ -2,7 +2,7 @@ package io.github.cottonmc.cotton.gui;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.util.TriState;
+import io.github.cottonmc.cotton.gui.TriState;
 import net.minecraft.world.inventory.ContainerData;
 
 import io.github.cottonmc.cotton.gui.widget.WPanel;
