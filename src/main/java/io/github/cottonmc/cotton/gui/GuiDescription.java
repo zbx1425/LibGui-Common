@@ -18,7 +18,6 @@ import org.jspecify.annotations.Nullable;
  * They also manage the focused widget.
  *
  * @see io.github.cottonmc.cotton.gui.client.LightweightGuiDescription
- * @see SyncedGuiDescription
  */
 public interface GuiDescription {
 	public WPanel getRootPanel();

@@ -1,7 +1,8 @@
 plugins {
 	id 'net.fabricmc.fabric-loom' version '1.15.+'
 	id 'maven-publish'
-	id 'checkstyle'
+	id 'com.gradleup.shadow' version '9.4.1'
+//	id 'checkstyle'
 }
 
 base {
@@ -52,11 +53,15 @@ repositories {
 	}
 }
 
+configurations {
+	shadow
+}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	include api("io.github.juuxel:libninepatch:${project.libninepatch_version}")
+	shadow api("io.github.juuxel:libninepatch:${project.libninepatch_version}")
 
 	// Test mod dependencies
 	testModImplementation sourceSets.main.output
@@ -72,6 +77,12 @@ processResources {
 
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
+	}
+
+	filesMatching("mixins.libgui.json") {
+		filter { line ->
+			line.replaceAll('io.github.cottonmc.cotton.gui', 'io.github.cottonmc.cotton.guicommon')
+		}
 	}
 }
 
@@ -91,15 +102,28 @@ tasks.withType(JavaCompile) {
 	options.release = 25
 }
 
+shadowJar {
+	exclude "fabric.mod.json"
+	configurations = [project.configurations.shadow]
+	archiveClassifier = "all"
+
+	relocate "io.github.cottonmc.cotton.gui", "io.github.cottonmc.cotton.guicommon"
+	relocate "juuxel.libninepatch", "io.github.cottonmc.cotton.guicommon.libninepatch"
+}
+
+tasks.named('assemble') {
+	dependsOn shadowJar
+}
+
 jar {
 	from "CREDITS.txt", "LICENSE"
 }
 
-checkstyle {
-	configFile = rootProject.file('checkstyle.xml')
-	configProperties = [suppressions: rootProject.file('checkstyle.suppressions.xml').absolutePath]
-	toolVersion = '10.9.2'
-}
+//checkstyle {
+//	configFile = rootProject.file('checkstyle.xml')
+//	configProperties = [suppressions: rootProject.file('checkstyle.suppressions.xml').absolutePath]
+//	toolVersion = '10.9.2'
+//}
 
 def javadocBuildJar = tasks.register('javadocBuildJar', Jar) {
 	destinationDirectory = file('build/devlibs')
