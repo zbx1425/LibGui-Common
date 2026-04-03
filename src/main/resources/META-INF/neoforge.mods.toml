@@ -4,7 +4,7 @@ license = "MIT"
 issueTrackerURL="https://github.com/CottonMC/LibGUI/issues"
 
 [[mods]]
-modId = "libgui_common"
+modId = "libgui"
 version = "${version}"
 displayName = "LibGui"
 displayURL = "https://github.com/CottonMC/LibGUI/"
@@ -15,7 +15,7 @@ logoFile = "assets/libgui/icon.png"
 
 displayTest = "IGNORE_ALL_VERSION"
 
-[[dependencies.libgui_common]]
+[[dependencies.libgui]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[26.1, 26.2)"

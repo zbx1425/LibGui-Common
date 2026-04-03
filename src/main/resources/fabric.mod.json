@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "libgui_common",
+	"id": "libgui",
 	"version": "${version}",
 
 	"name": "LibGui",

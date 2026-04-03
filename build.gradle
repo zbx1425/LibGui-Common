@@ -107,8 +107,7 @@ shadowJar {
 	configurations = [project.configurations.shadow]
 	archiveClassifier = "all"
 
-	relocate "io.github.cottonmc.cotton.gui", "io.github.cottonmc.cotton.guicommon"
-	relocate "juuxel.libninepatch", "io.github.cottonmc.cotton.guicommon.libninepatch"
+	relocate "juuxel.libninepatch", "io.github.cottonmc.cotton.gui.libninepatch"
 }
 
 tasks.named('assemble') {
